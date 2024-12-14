@@ -1,6 +1,32 @@
-import { Button } from "@/components/ui/button";
 import CodeBlock from "@/components/ui/code-block";
+import Link from "next/link";
 
+const mailto = `mailto:paschalidi@outlook.com?subject=${encodeURIComponent("ChatScale Support Request")}&body=${encodeURIComponent(
+  `Hello ChatScale Support Team,
+
+I need assistance with ChatScale integration.
+
+Technical Details:
+- Package Version: 
+- Browser: 
+- Environment: 
+
+Issue Description:
+[Please describe your issue]
+
+Steps to Reproduce:
+1. 
+2. 
+3. 
+
+Expected Behavior:
+
+
+Current Behavior:
+
+
+Thank you for your help!`
+)}`
 const codeExamples = {
   installation: `npm install @chatscale/react`,
 
@@ -194,40 +220,22 @@ export function DocsContent() {
         <div className="not-prose bg-muted p-4 rounded-lg my-6">
           <h4 className="mt-0 text-base font-medium">Current Limits</h4>
           <ul className="mt-2 space-y-2 text-sm">
-            <li>WebSocket connections: 1000 per organization per day</li>
-            <li>Messages: 100,000 per organization per day</li>
-            <li>API requests: 10,000 per organization per day</li>
+            <li>WebSocket connections: TDB per organization per day</li>
+            <li>Messages: TDB per organization per day</li>
+            <li>API requests: TDB per organization per day</li>
           </ul>
-        </div>
-
-        <h2 id="browser-support">Browser Support</h2>
-        <div className="grid grid-cols-2 gap-4 my-6">
-          <div className="bg-muted p-4 rounded-lg">
-            <h4 className="mt-0 text-base font-medium">Supported Browsers</h4>
-            <ul className="mt-2 space-y-2 text-sm">
-              <li>Chrome (last 2 versions)</li>
-              <li>Firefox (last 2 versions)</li>
-              <li>Safari (last 2 versions)</li>
-              <li>Edge (last 2 versions)</li>
-            </ul>
-          </div>
-          <div className="bg-muted p-4 rounded-lg">
-            <h4 className="mt-0 text-base font-medium">Support Resources</h4>
-            <ul className="mt-2 space-y-2 text-sm">
-              <li>Documentation: docs.chatscale.io</li>
-              <li>GitHub Issues: github.com/chatscale/react</li>
-              <li>Email: support@chatscale.io</li>
-              <li>Discord: discord.gg/chatscale</li>
-            </ul>
-          </div>
         </div>
 
         <div className="my-12 p-6 border rounded-lg bg-primary/5">
           <h3 className="mt-0">Need Help?</h3>
           <p className="mb-4">Our support team is here to help you build amazing chat experiences.</p>
           <div className="flex gap-4">
-            <Button>Contact Support</Button>
-            <Button variant="outline">Join Discord</Button>
+            <Link
+              className="btn btn-primary"
+              href={mailto}
+            >
+              Contact Support
+            </Link>
           </div>
         </div>
       </div>
