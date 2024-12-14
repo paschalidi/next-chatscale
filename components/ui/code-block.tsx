@@ -3,7 +3,7 @@ import { Highlight, themes } from 'prism-react-renderer';
 import { Check, ClipboardCopy, Code2 } from 'lucide-react';
 
 const CodeBlock = ({
-                     code,
+                     code= '',
                      language = 'jsx',
                      filename = 'Example.jsx',
                      showLineNumbers = true,
