@@ -13,15 +13,12 @@ export function Header() {
           <span className="font-bold text-xl">ChatScale</span>
         </div>
         <nav className="hidden md:flex items-center space-x-8">
-          <Link href="#features" className="text-sm text-muted-foreground hover:text-primary">
+          <Link href="/#features" className="text-sm text-muted-foreground hover:text-primary">
             Features
           </Link>
-          {/*<Link href="#pricing" className="text-sm text-muted-foreground hover:text-primary">*/}
-          {/*  Pricing*/}
-          {/*</Link>*/}
-          {/*<Link href="#docs" className="text-sm text-muted-foreground hover:text-primary">*/}
-          {/*  Documentation*/}
-          {/*</Link>*/}
+          <Link href="/docs" className="text-sm text-muted-foreground hover:text-primary">
+            Documentation
+          </Link>
           <Button variant="outline">Login</Button>
           <Button>Get Started</Button>
         </nav>

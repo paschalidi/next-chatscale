@@ -1,0 +1,236 @@
+import { Button } from "@/components/ui/button";
+import CodeBlock from "@/components/ui/code-block";
+
+const codeExamples = {
+  installation: `npm install @chatscale/react`,
+
+  quickStart: `import { ChatProvider, ChatList, MessageInput } from '@chatscale/react'
+
+function App() {
+  return (
+    <ChatProvider organizationToken="your_token">
+      <ChatList />
+      <MessageInput />
+    </ChatProvider>
+  )
+}`,
+
+  chatProvider: `import { ChatProvider } from '@chatscale/react'
+
+<ChatProvider 
+  organizationToken="your_token"
+  options={{
+    reconnectInterval: 3000,
+    maxReconnectAttempts: 5,
+    debug: false
+  }}
+>
+  {/* Your chat components */}
+</ChatProvider>`,
+
+  chatList: `import { ChatList } from '@chatscale/react'
+
+<ChatList 
+  limit={50}
+  onChatSelect={(chatId) => console.log('Selected chat:', chatId)}
+  customStyles={{
+    container: 'custom-container-class',
+    chatItem: 'custom-item-class'
+  }}
+/>`,
+
+  messageInput: `import { MessageInput } from '@chatscale/react'
+
+<MessageInput 
+  placeholder="Type a message..."
+  onSend={(message) => console.log('Sending:', message)}
+  attachments={true}
+  maxLength={1000}
+/>`,
+
+  customComponents: `<ChatList
+  renderItem={(chat) => (
+    <div className="custom-chat-item">
+      <h3>{chat.title}</h3>
+      <p>{chat.lastMessage}</p>
+    </div>
+  )}
+/>`,
+
+  hooks: `import { useChatConnection, useMessages } from '@chatscale/react'
+
+function CustomChat() {
+  const { status, connect, disconnect } = useChatConnection()
+  const { messages, sendMessage } = useMessages(chatId)
+  
+  // Custom implementation
+}`,
+
+  presenceIndicator: `import { PresenceIndicator } from '@chatscale/react'
+
+<PresenceIndicator 
+  userId="user123"
+  onlineClassName="user-online"
+  offlineClassName="user-offline"
+/>`,
+
+  typingIndicator: `import { TypingIndicator } from '@chatscale/react'
+
+<TypingIndicator chatId="chat123" />`,
+
+  errorHandling: `<ChatProvider
+  organizationToken="your_token"
+  onError={(error) => {
+    console.error('ChatScale error:', error)
+    // Custom error handling
+  }}
+>
+  {/* Your chat components */}
+</ChatProvider>`
+};
+
+export function DocsContent() {
+  return (
+    <div className="flex-1 max-w-3xl">
+      <div className="prose prose-slate dark:prose-invert max-w-none">
+        <h1>ChatScale Documentation</h1>
+        <p className="lead">
+          Welcome to ChatScale - Enterprise-grade chat infrastructure for modern applications.
+        </p>
+
+        <h2 id="quick-start">Quick Start</h2>
+        <p>Get up and running with ChatScale in minutes:</p>
+        <CodeBlock
+          code={codeExamples.installation}
+          language="bash"
+          filename="Terminal"
+          showLineNumbers={false}
+        />
+
+        <p>Add chat functionality to your React application with just a few lines of code:</p>
+        <CodeBlock
+          code={codeExamples.quickStart}
+          filename="App.jsx"
+        />
+
+        <h2 id="chat-provider">ChatProvider</h2>
+        <p>
+          The ChatProvider component initializes the ChatScale client and manages the WebSocket connection.
+          It must wrap all other ChatScale components.
+        </p>
+        <CodeBlock
+          code={codeExamples.chatProvider}
+          filename="ChatProvider.jsx"
+        />
+
+        <h2 id="chat-list">ChatList</h2>
+        <p>Displays the list of active chats for the current user.</p>
+        <CodeBlock
+          code={codeExamples.chatList}
+          filename="ChatList.jsx"
+        />
+
+        <div className="not-prose bg-muted p-4 rounded-lg my-6">
+          <h4 className="mt-0 text-base font-medium">Available Props</h4>
+          <ul className="mt-2 space-y-2 text-sm">
+            <li><code>limit</code>: Maximum number of chats to display (default: 50)</li>
+            <li><code>onChatSelect</code>: Callback function when a chat is selected</li>
+            <li><code>customStyles</code>: Object containing custom CSS classes</li>
+          </ul>
+        </div>
+
+        <h2 id="message-input">MessageInput</h2>
+        <p>Renders an input field for sending messages.</p>
+        <CodeBlock
+          code={codeExamples.messageInput}
+          filename="MessageInput.jsx"
+        />
+
+        <h2 id="custom-components">Custom Components</h2>
+        <p>ChatScale components can be customized using render props:</p>
+        <CodeBlock
+          code={codeExamples.customComponents}
+          filename="CustomComponent.jsx"
+        />
+
+        <h2 id="hooks">Hooks</h2>
+        <p>ChatScale provides custom hooks for advanced use cases:</p>
+        <CodeBlock
+          code={codeExamples.hooks}
+          filename="CustomHooks.jsx"
+        />
+
+        <div className="not-prose bg-secondary/50 p-4 rounded-lg my-6">
+          <h4 className="mt-0 text-base font-medium">Available Hooks</h4>
+          <ul className="mt-2 space-y-2 text-sm">
+            <li><code>useChatConnection</code>: Manage WebSocket connection</li>
+            <li><code>useMessages</code>: Access and manage messages for a specific chat</li>
+            <li><code>useChatList</code>: Access and manage the list of chats</li>
+            <li><code>useTypingIndicator</code>: Handle typing indicators</li>
+          </ul>
+        </div>
+
+        <h2 id="real-time-features">Real-time Features</h2>
+        <h3>Presence Indicators</h3>
+        <CodeBlock
+          code={codeExamples.presenceIndicator}
+          filename="PresenceIndicator.jsx"
+        />
+
+        <h3>Typing Indicators</h3>
+        <CodeBlock
+          code={codeExamples.typingIndicator}
+          filename="TypingIndicator.jsx"
+        />
+
+        <h2 id="error-handling">Error Handling</h2>
+        <p>ChatScale provides built-in error handling and reconnection logic.</p>
+        <CodeBlock
+          code={codeExamples.errorHandling}
+          filename="ErrorHandling.jsx"
+        />
+
+        <h2 id="rate-limits">Rate Limits</h2>
+        <div className="not-prose bg-muted p-4 rounded-lg my-6">
+          <h4 className="mt-0 text-base font-medium">Current Limits</h4>
+          <ul className="mt-2 space-y-2 text-sm">
+            <li>WebSocket connections: 1000 per organization per day</li>
+            <li>Messages: 100,000 per organization per day</li>
+            <li>API requests: 10,000 per organization per day</li>
+          </ul>
+        </div>
+
+        <h2 id="browser-support">Browser Support</h2>
+        <div className="grid grid-cols-2 gap-4 my-6">
+          <div className="bg-muted p-4 rounded-lg">
+            <h4 className="mt-0 text-base font-medium">Supported Browsers</h4>
+            <ul className="mt-2 space-y-2 text-sm">
+              <li>Chrome (last 2 versions)</li>
+              <li>Firefox (last 2 versions)</li>
+              <li>Safari (last 2 versions)</li>
+              <li>Edge (last 2 versions)</li>
+            </ul>
+          </div>
+          <div className="bg-muted p-4 rounded-lg">
+            <h4 className="mt-0 text-base font-medium">Support Resources</h4>
+            <ul className="mt-2 space-y-2 text-sm">
+              <li>Documentation: docs.chatscale.io</li>
+              <li>GitHub Issues: github.com/chatscale/react</li>
+              <li>Email: support@chatscale.io</li>
+              <li>Discord: discord.gg/chatscale</li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="my-12 p-6 border rounded-lg bg-primary/5">
+          <h3 className="mt-0">Need Help?</h3>
+          <p className="mb-4">Our support team is here to help you build amazing chat experiences.</p>
+          <div className="flex gap-4">
+            <Button>Contact Support</Button>
+            <Button variant="outline">Join Discord</Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
