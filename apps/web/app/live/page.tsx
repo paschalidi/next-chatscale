@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ChatList, ChatProvider, MessageInput, Messages } from "@chatscale/react";
 import { DebugPanel } from "@/components/live/debug-panel";
 import { useRouter, useSearchParams } from "next/navigation";
+import { clsx } from "clsx";
 
 export default function Live() {
   const searchParams = useSearchParams();
@@ -41,10 +42,12 @@ export default function Live() {
               <div className="col-span-4 border rounded-lg p-4">
                 <h3 className="font-medium mb-4">Channels</h3>
                 <ChatList
+                  renderItem={(chat) => <div className={clsx({
+                    'bg-accent p-3': selectedChat === chat.name,
+                  }, 'rounded-lg hover:bg-neutral-200 cursor-pointer')}># {chat.name}</div>}
                   onChatSelect={handleChannelSelection}
                   customStyles={{
                     container: 'space-y-2',
-                    chatItem: 'p-3 rounded-lg hover:bg-accent cursor-pointer'
                   }}
                 />
               </div>
@@ -64,9 +67,11 @@ export default function Live() {
                     {selectedChat ? (
                       <div className="space-y-4">
                         <Messages
-                          className="bg-white"
                           containerClassName="px-6"
-                          messageClassName="shadow-sm"
+                          messageClassName={({ isCurrentUser }) => clsx(
+                            'p-3 rounded-xl shadow-sm',
+                            isCurrentUser ? 'bg-blue-500 text-white ml-auto' : 'bg-gray-100'
+                          )}
                         />
                       </div>
                     ) : (

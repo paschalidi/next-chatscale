@@ -370,7 +370,7 @@ var useChat = function() {
 var React2 = __toESM(require("react"));
 var ChatList = function(param) {
     var _param_limit = param.limit, limit = _param_limit === void 0 ? 50 : _param_limit, onChatSelect = param.onChatSelect, _param_customStyles = param.customStyles, customStyles = _param_customStyles === void 0 ? {} : _param_customStyles, renderItem = param.renderItem;
-    var organizationToken = useChat().organizationToken;
+    var _useChat = useChat(), organizationToken = _useChat.organizationToken, channelName = _useChat.channelName;
     var _React2_useState = _sliced_to_array(React2.useState([
         {
             id: "public",
@@ -382,54 +382,15 @@ var ChatList = function(param) {
     React2.useEffect(function() {
         var fetchChats = /*#__PURE__*/ function() {
             var _ref = _async_to_generator(function() {
-                var response, data, error;
                 return _ts_generator(this, function(_state) {
-                    switch(_state.label){
-                        case 0:
-                            _state.trys.push([
-                                0,
-                                3,
-                                4,
-                                5
-                            ]);
-                            return [
-                                4,
-                                fetch("/api/chats?limit=".concat(limit), {
-                                    headers: {
-                                        "Authorization": "Bearer ".concat(organizationToken)
-                                    }
-                                })
-                            ];
-                        case 1:
-                            response = _state.sent();
-                            return [
-                                4,
-                                response.json()
-                            ];
-                        case 2:
-                            data = _state.sent();
-                            setChats(data);
-                            return [
-                                3,
-                                5
-                            ];
-                        case 3:
-                            error = _state.sent();
-                            console.error("Error fetching chats:", error);
-                            return [
-                                3,
-                                5
-                            ];
-                        case 4:
-                            setIsLoading(false);
-                            return [
-                                7
-                            ];
-                        case 5:
-                            return [
-                                2
-                            ];
+                    try {} catch (error) {
+                        console.error("Error fetching chats:", error);
+                    } finally{
+                        setIsLoading(false);
                     }
+                    return [
+                        2
+                    ];
                 });
             });
             return function fetchChats() {
@@ -497,7 +458,9 @@ var MessageInput = function(param) {
 // src/components/Messages/index.tsx
 var React4 = __toESM(require("react"));
 var Messages = function(param) {
-    var _param_className = param.className, className = _param_className === void 0 ? "" : _param_className, _param_containerClassName = param.containerClassName, containerClassName = _param_containerClassName === void 0 ? "" : _param_containerClassName, _param_messageClassName = param.messageClassName, messageClassName = _param_messageClassName === void 0 ? "" : _param_messageClassName, renderMessage = param.renderMessage;
+    var _param_className = param.className, className = _param_className === void 0 ? "" : _param_className, _param_containerClassName = param.containerClassName, containerClassName = _param_containerClassName === void 0 ? "" : _param_containerClassName, _param_messageClassName = param.messageClassName, messageClassName = _param_messageClassName === void 0 ? function() {
+        return "";
+    } : _param_messageClassName, renderMessage = param.renderMessage;
     var messages = useChat().messages;
     var messagesEndRef = React4.useRef(null);
     var scrollToBottom = function() {
@@ -513,7 +476,9 @@ var Messages = function(param) {
     ]);
     var defaultRenderMessage = function(message) {
         return /* @__PURE__ */ React4.createElement("div", {
-            className: "p-4 rounded-lg ".concat(message.user_id === "me" ? "bg-blue-500 text-white ml-auto" : "bg-gray-100", " ").concat(messageClassName)
+            className: messageClassName({
+                isCurrentUser: message.user_id === ""
+            })
         }, /* @__PURE__ */ React4.createElement("div", {
             className: "flex justify-between items-start gap-2"
         }, /* @__PURE__ */ React4.createElement("span", {

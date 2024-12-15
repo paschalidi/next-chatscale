@@ -5,7 +5,7 @@ import { useChat } from '../../context/ChatContext';
 export const Messages: React.FC<MessagesProps> = ({
                                                     className = '',
                                                     containerClassName = '',
-                                                    messageClassName = '',
+                                                    messageClassName = () => '',
                                                     renderMessage
                                                   }) => {
   const { messages } = useChat();
@@ -19,23 +19,21 @@ export const Messages: React.FC<MessagesProps> = ({
     scrollToBottom();
   }, [messages]);
 
-  const defaultRenderMessage = (message: Message) => (
-    <div
-      className={`p-4 rounded-lg ${
-        message.user_id === 'me'
-          ? 'bg-blue-500 text-white ml-auto'
-          : 'bg-gray-100'
-      } ${messageClassName}`}
-    >
-      <div className="flex justify-between items-start gap-2">
-        <span className="font-medium">{message.user_id}</span>
-        <span className="text-xs opacity-70">
+  const defaultRenderMessage = (message: Message) => {
+    return (
+      <div
+        className={messageClassName({ isCurrentUser: message.user_id === "" })}
+      >
+        <div className="flex justify-between items-start gap-2">
+          <span className="font-medium">{message.user_id}</span>
+          <span className="text-xs opacity-70">
           {new Date(message.timestamp * 1000).toLocaleTimeString()}
         </span>
+        </div>
+        <p className="mt-1">{message.content}</p>
       </div>
-      <p className="mt-1">{message.content}</p>
-    </div>
-  );
+    )
+  };
 
   return (
     <div className={`flex flex-col h-full ${className}`}>

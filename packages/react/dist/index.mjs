@@ -105,7 +105,7 @@ var ChatList = ({
   customStyles = {},
   renderItem
 }) => {
-  const { organizationToken } = useChat();
+  const { organizationToken, channelName } = useChat();
   const [chats, setChats] = React2.useState([
     {
       id: "public",
@@ -117,13 +117,6 @@ var ChatList = ({
   React2.useEffect(() => {
     const fetchChats = async () => {
       try {
-        const response = await fetch(`/api/chats?limit=${limit}`, {
-          headers: {
-            "Authorization": `Bearer ${organizationToken}`
-          }
-        });
-        const data = await response.json();
-        setChats(data);
       } catch (error) {
         console.error("Error fetching chats:", error);
       } finally {
@@ -196,7 +189,7 @@ import * as React4 from "react";
 var Messages = ({
   className = "",
   containerClassName = "",
-  messageClassName = "",
+  messageClassName = () => "",
   renderMessage
 }) => {
   const { messages } = useChat();
@@ -207,14 +200,16 @@ var Messages = ({
   React4.useEffect(() => {
     scrollToBottom();
   }, [messages]);
-  const defaultRenderMessage = (message) => /* @__PURE__ */ React4.createElement(
-    "div",
-    {
-      className: `p-4 rounded-lg ${message.user_id === "me" ? "bg-blue-500 text-white ml-auto" : "bg-gray-100"} ${messageClassName}`
-    },
-    /* @__PURE__ */ React4.createElement("div", { className: "flex justify-between items-start gap-2" }, /* @__PURE__ */ React4.createElement("span", { className: "font-medium" }, message.user_id), /* @__PURE__ */ React4.createElement("span", { className: "text-xs opacity-70" }, new Date(message.timestamp * 1e3).toLocaleTimeString())),
-    /* @__PURE__ */ React4.createElement("p", { className: "mt-1" }, message.content)
-  );
+  const defaultRenderMessage = (message) => {
+    return /* @__PURE__ */ React4.createElement(
+      "div",
+      {
+        className: messageClassName({ isCurrentUser: message.user_id === "" })
+      },
+      /* @__PURE__ */ React4.createElement("div", { className: "flex justify-between items-start gap-2" }, /* @__PURE__ */ React4.createElement("span", { className: "font-medium" }, message.user_id), /* @__PURE__ */ React4.createElement("span", { className: "text-xs opacity-70" }, new Date(message.timestamp * 1e3).toLocaleTimeString())),
+      /* @__PURE__ */ React4.createElement("p", { className: "mt-1" }, message.content)
+    );
+  };
   return /* @__PURE__ */ React4.createElement("div", { className: `flex flex-col h-full ${className}` }, /* @__PURE__ */ React4.createElement("div", { className: `flex-1 overflow-y-auto p-4 space-y-4 ${containerClassName}` }, messages.map((message, index) => /* @__PURE__ */ React4.createElement("div", { key: index, className: "max-w-[70%]" }, renderMessage ? renderMessage(message) : defaultRenderMessage(message))), /* @__PURE__ */ React4.createElement("div", { ref: messagesEndRef })));
 };
 export {

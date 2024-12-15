@@ -66,7 +66,9 @@ interface Message {
 interface MessagesProps {
     className?: string;
     containerClassName?: string;
-    messageClassName?: string;
+    messageClassName?: ({ isCurrentUser }: {
+        isCurrentUser: boolean;
+    }) => string;
     renderMessage?: (message: Message) => React.ReactNode;
 }
 

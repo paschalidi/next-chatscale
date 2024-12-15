@@ -8,7 +8,7 @@ export const ChatList: React.FC<ChatListProps> = ({
                                                     customStyles = {},
                                                     renderItem
                                                   }) => {
-  const { organizationToken } = useChat();
+  const { organizationToken, channelName } = useChat();
   const [chats, setChats] = React.useState<Chat[]>([
     {
       id: 'public',
@@ -22,13 +22,13 @@ export const ChatList: React.FC<ChatListProps> = ({
   React.useEffect(() => {
     const fetchChats = async () => {
       try {
-        const response = await fetch(`/api/chats?limit=${limit}`, {
-          headers: {
-            'Authorization': `Bearer ${organizationToken}`
-          }
-        });
-        const data = await response.json();
-        setChats(data);
+        // const response = await fetch(`/api/chats?limit=${limit}`, {
+        //   headers: {
+        //     'Authorization': `Bearer ${organizationToken}`
+        //   }
+        // });
+        // const data = await response.json();
+        // setChats(data);
       } catch (error) {
         console.error('Error fetching chats:', error);
       } finally {
