@@ -5,7 +5,7 @@ import { ChatList, ChatProvider, MessageInput, Messages } from "@chatscale/react
 import { DebugPanel } from "@/components/live/debug-panel";
 
 export default function Live() {
-  const [selectedChat, setSelectedChat] = useState<string | null>('tech_support');
+  const [selectedChat, setSelectedChat] = useState<string | null>('public');
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -22,13 +22,12 @@ export default function Live() {
 
           <ChatProvider
             organizationToken="test_token"
-            wsEndpoint="ws://localhost:3001/ws/chat/tech_support"
             options={{ debug: true }}
           >
             <div className="grid grid-cols-12 gap-6 mt-6">
               {/* Sidebar with chat list */}
               <div className="col-span-4 border rounded-lg p-4">
-                <h3 className="font-medium mb-4">Active Chats</h3>
+                <h3 className="font-medium mb-4">Channels</h3>
                 <ChatList
                   onChatSelect={setSelectedChat}
                   customStyles={{
@@ -44,7 +43,7 @@ export default function Live() {
                   {/* Chat header */}
                   <div className="border-b pb-4">
                     <h3 className="font-medium">
-                      {selectedChat ? `Chat: ${selectedChat}` : 'Select a chat'}
+                      {selectedChat ? `Channel: ${selectedChat}` : 'Select a channel'}
                     </h3>
                   </div>
 

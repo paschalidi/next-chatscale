@@ -1,15 +1,15 @@
 'use client'
 import * as React from 'react';
 import { ChatProviderProps } from "./types";
+import { config } from "../../config";
 
 interface ChatContextType {
   organizationToken: string;
-  wsEndpoint: string;
+  channelName: string;
   isConnected: boolean;
   ws: WebSocket | null;
   messages: Message[];
 }
-
 const ChatContext = React.createContext<ChatContextType | null>(null);
 
 interface Message {
@@ -24,13 +24,15 @@ interface Message {
 export const ChatProvider: React.FC<ChatProviderProps> = ({
                                                             children,
                                                             organizationToken,
-                                                            wsEndpoint,
                                                             options = {
                                                               reconnectInterval: 3000,
                                                               maxReconnectAttempts: 5,
                                                               debug: false
                                                             }
                                                           }) => {
+  const searchParams = new URLSearchParams(window.location.search);
+  const channelName = searchParams.get('cn') || 'public';
+  const wsEndpoint = `${config.rust_ws_url}/chat/${channelName}`;
   const [isConnected, setIsConnected] = React.useState(false);
   const ws = React.useRef<WebSocket | null>(null);
   const reconnectAttempts = React.useRef(0);
@@ -102,7 +104,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
 
   const value = React.useMemo(() => ({
     organizationToken,
-    wsEndpoint,
+    channelName,
     isConnected,
     messages,
     ws: ws.current
