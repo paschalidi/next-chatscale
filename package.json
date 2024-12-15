@@ -5,6 +5,7 @@
     "build": "pnpm -r build",
     "dev": "pnpm --parallel -r dev",
     "lint": "pnpm -r lint"
+
   },
   "devDependencies": {
     "@chatscale/react": "workspace:^",
