@@ -12,7 +12,6 @@ export function DebugPanel() {
         {JSON.stringify({
           connectionStatus: isConnected ? "Connected" : "Disconnected",
           endpoint: wsEndpoint,
-          timestamp: new Date().toISOString()
         }, null, 2)}
       </pre>
     </div>
