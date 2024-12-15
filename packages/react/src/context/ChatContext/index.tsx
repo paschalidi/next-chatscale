@@ -7,6 +7,7 @@ interface ChatContextType {
   organizationToken: string;
   channelName: string;
   isConnected: boolean;
+  wsEndpoint: string;
   ws: WebSocket | null;
   messages: Message[];
 }
@@ -105,6 +106,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
   const value = React.useMemo(() => ({
     organizationToken,
     channelName,
+    wsEndpoint,
     isConnected,
     messages,
     ws: ws.current

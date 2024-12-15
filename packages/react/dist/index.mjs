@@ -85,6 +85,7 @@ var ChatProvider = ({
   const value = React.useMemo(() => ({
     organizationToken,
     channelName,
+    wsEndpoint,
     isConnected,
     messages,
     ws: ws.current

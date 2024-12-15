@@ -14,6 +14,7 @@ interface ChatContextType {
     organizationToken: string;
     channelName: string;
     isConnected: boolean;
+    wsEndpoint: string;
     ws: WebSocket | null;
     messages: Message$1[];
 }

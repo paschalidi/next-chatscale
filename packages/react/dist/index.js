@@ -348,6 +348,7 @@ var ChatProvider = function(param) {
         return {
             organizationToken: organizationToken,
             channelName: channelName,
+            wsEndpoint: wsEndpoint,
             isConnected: isConnected,
             messages: messages,
             ws: ws.current
