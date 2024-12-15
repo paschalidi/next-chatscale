@@ -91,7 +91,7 @@ export default function Live() {
                         <Messages
                           containerClassName="px-6"
                           messageClassName={clsx(
-                            'py-1 rounded-xl shadow-sm bg-gray-100 w-min px-5',
+                            'rounded-xl shadow-sm bg-gray-100 w-fit px-5',
                           )}
                         />
                       </div>
