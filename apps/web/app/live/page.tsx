@@ -8,26 +8,30 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { clsx } from "clsx";
 
 function generateRandomUsername(): string {
-  const adjectives = [
-    'Happy', 'Clever', 'Swift', 'Brave', 'Calm', 'Daring', 'Eager',
-    'Fierce', 'Gentle', 'Witty', 'Jolly', 'Kind', 'Loud', 'Merry',
-    'Noble', 'Proud', 'Quiet', 'Rapid', 'Silly', 'Tiny'
+  const races = [
+    'elf', 'dwarf', 'wizard', 'rogue', 'mage', 'knight', 'druid',
+    'paladin', 'ranger', 'bard', 'necromancer', 'shaman', 'warlock',
+    'barbarian', 'monk', 'sorcerer', 'assassin', 'cleric', 'summoner', 'berserker'
   ];
 
-  const nouns = [
-    'panda', 'fox', 'wolf', 'eagle', 'lion', 'tiger', 'bear',
-    'hawk', 'owl', 'dolphin', 'shark', 'phoenix', 'dragon',
-    'falcon', 'jaguar', 'leopard', 'raven', 'whale', 'zebra', 'cobra',
-    'panther', 'cheetah', 'gorilla', 'elephant', 'rhino',
-    'mongoose', 'hyena', 'lynx', 'koala', 'vulture',
-    'octopus', 'wolf', 'gazelle', 'serpent', 'griffin'
+  const realms = [
+    'shadow', 'storm', 'frost', 'fire', 'moon', 'sun', 'wind',
+    'dark', 'light', 'void', 'chaos', 'order', 'blood', 'iron',
+    'crystal', 'mist', 'dream', 'eternal', 'savage', 'celestial'
   ];
 
-  const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
-  const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
-  const randomNumber = Math.floor(Math.random() * 100);
+  const titles = [
+    'Lord', 'Lady', 'Master', 'Guardian', 'Sage', 'Keeper', 'Champion',
+    'Archmage', 'Elder', 'Sovereign', 'Warden', 'Protector', 'Mystic',
+    'Arch', 'Blade', 'Flame', 'Shadow', 'Grand', 'High', 'Eternal'
+  ];
 
-  return `${randomAdjective} ${randomNoun} ${randomNumber}`;
+  const race = races[Math.floor(Math.random() * races.length)];
+  const realm = realms[Math.floor(Math.random() * realms.length)];
+  const title = titles[Math.floor(Math.random() * titles.length)];
+  const runicCode = Array.from({length: 2}, () => String.fromCharCode(Math.floor(Math.random() * 26) + 65)).join('').toLowerCase();
+
+  return `${title}${race.charAt(0).toUpperCase() + race.slice(1)} of ${realm.charAt(0).toUpperCase() + realm.slice(1)}-${runicCode}`;
 }
 
 export default function Live() {

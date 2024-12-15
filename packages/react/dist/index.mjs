@@ -1,10 +1,11 @@
 // src/context/ChatContext/index.tsx
 import * as React from "react";
+import { useMemo as useMemo2 } from "react";
 
 // src/config.ts
 var config = {
-  rust_api_url: "http://localhost:3001/api",
-  rust_ws_url: "ws://localhost:3001/ws"
+  rust_api_url: "https://api.chatscale.cloud/api",
+  rust_ws_url: "wss://api.chatscale.cloud/ws"
 };
 
 // src/context/ChatContext/index.tsx
@@ -21,12 +22,13 @@ var ChatProvider = ({
     debug: false
   }
 }) => {
-  const wsEndpoint = `${config.rust_ws_url}/chat/${channelName}`;
+  const wsEndpoint = useMemo2(() => `${config.rust_ws_url}/chat/${channelName}`, [channelName]);
   const [isConnected, setIsConnected] = React.useState(false);
   const ws = React.useRef(null);
   const reconnectAttempts = React.useRef(0);
   const reconnectTimeout = React.useRef();
   const [messages, setMessages] = React.useState([]);
+  console.log(wsEndpoint);
   const connect = React.useCallback(() => {
     try {
       ws.current = new WebSocket(wsEndpoint);
@@ -69,6 +71,7 @@ var ChatProvider = ({
         console.error("WebSocket connection error:", error);
     }
   }, [wsEndpoint]);
+  console.log("messages", channelName);
   React.useEffect(() => {
     connect();
     return () => {

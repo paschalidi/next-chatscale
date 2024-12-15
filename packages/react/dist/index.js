@@ -265,10 +265,11 @@ __export(src_exports, {
 module.exports = __toCommonJS(src_exports);
 // src/context/ChatContext/index.tsx
 var React = __toESM(require("react"));
+var import_react = require("react");
 // src/config.ts
 var config = {
-    rust_api_url: "http://localhost:3001/api",
-    rust_ws_url: "ws://localhost:3001/ws"
+    rust_api_url: "https://api.chatscale.cloud/api",
+    rust_ws_url: "wss://api.chatscale.cloud/ws"
 };
 // src/context/ChatContext/index.tsx
 var ChatContext = React.createContext(null);
@@ -278,12 +279,17 @@ var ChatProvider = function(param) {
         maxReconnectAttempts: 5,
         debug: false
     } : _param_options;
-    var wsEndpoint = "".concat(config.rust_ws_url, "/chat/").concat(channelName);
+    var wsEndpoint = (0, import_react.useMemo)(function() {
+        return "".concat(config.rust_ws_url, "/chat/").concat(channelName);
+    }, [
+        channelName
+    ]);
     var _React_useState = _sliced_to_array(React.useState(false), 2), isConnected = _React_useState[0], setIsConnected = _React_useState[1];
     var ws = React.useRef(null);
     var reconnectAttempts = React.useRef(0);
     var reconnectTimeout = React.useRef();
     var _React_useState1 = _sliced_to_array(React.useState([]), 2), messages = _React_useState1[0], setMessages = _React_useState1[1];
+    console.log(wsEndpoint);
     var connect = React.useCallback(function() {
         try {
             ws.current = new WebSocket(wsEndpoint);
@@ -329,6 +335,7 @@ var ChatProvider = function(param) {
     }, [
         wsEndpoint
     ]);
+    console.log("messages", channelName);
     React.useEffect(function() {
         connect();
         return function() {

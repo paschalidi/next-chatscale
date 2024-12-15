@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { ChatProviderProps } from "./types";
 import { config } from "../../config";
 import { Message } from "../../components/Messages/types";
@@ -29,13 +30,14 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
                                                               debug: false
                                                             }
                                                           }) => {
-  const wsEndpoint = `${config.rust_ws_url}/chat/${channelName}`;
+  const wsEndpoint = useMemo(() => `${config.rust_ws_url}/chat/${channelName}`, [channelName]);
   const [isConnected, setIsConnected] = React.useState(false);
   const ws = React.useRef<WebSocket | null>(null);
   const reconnectAttempts = React.useRef(0);
   const reconnectTimeout = React.useRef<number>();
   const [messages, setMessages] = React.useState<Message[]>([]);
 
+  console.log(wsEndpoint)
   const connect = React.useCallback(() => {
     try {
       ws.current = new WebSocket(wsEndpoint);
@@ -84,6 +86,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
     }
   }, [wsEndpoint]);
 
+  console.log('messages', channelName);
   React.useEffect(() => {
     connect();
 
