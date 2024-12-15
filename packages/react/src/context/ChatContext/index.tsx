@@ -7,9 +7,10 @@ interface ChatContextType {
   wsEndpoint: string;
   isConnected: boolean;
   ws: WebSocket | null;
+  messages: Message[];
 }
 
-const Index = React.createContext<ChatContextType | null>(null);
+const ChatContext = React.createContext<ChatContextType | null>(null);
 
 interface Message {
   id: string;
@@ -39,10 +40,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
   const connect = React.useCallback(() => {
     console.log('Connecting to WebSocket', wsEndpoint);
     try {
-      if (ws.current) {
-        ws.current.close();
-      }
-
       ws.current = new WebSocket(wsEndpoint);
 
       ws.current.onopen = () => {
@@ -52,9 +49,11 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
       };
 
       ws.current.onmessage = (event) => {
-        console.log('Received message:', event.data);
         const data = JSON.parse(event.data);
-        if (options.debug) console.log('Received message:', data);
+
+        if (options.debug) {
+          console.log('Received message:', data);
+        }
 
         // Add new message to state
         setMessages(prev => [...prev, {
@@ -99,22 +98,25 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
     };
   }, []);
 
+  console.log('@@@contetx', messages);
+
   const value = React.useMemo(() => ({
     organizationToken,
     wsEndpoint,
     isConnected,
+    messages,
     ws: ws.current
-  }), [organizationToken, wsEndpoint, isConnected]);
+  }), [organizationToken, wsEndpoint, isConnected,messages]);
 
   return (
-    <Index.Provider value={value}>
+    <ChatContext.Provider value={value}>
       {children}
-    </Index.Provider>
+    </ChatContext.Provider>
   );
 };
 
 export const useChat = () => {
-  const context = React.useContext(Index);
+  const context = React.useContext(ChatContext);
   if (!context) {
     throw new Error('useChat must be used within a ChatProvider');
   }

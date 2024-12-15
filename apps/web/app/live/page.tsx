@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { ChatList, ChatProvider, MessageInput } from "@chatscale/react";
+import { ChatList, ChatProvider, MessageInput, Messages } from "@chatscale/react";
 import { DebugPanel } from "@/components/live/debug-panel";
 
 export default function Live() {
-  const [selectedChat, setSelectedChat] = useState<string | null>(null);
+  const [selectedChat, setSelectedChat] = useState<string | null>('tech_support');
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -23,6 +23,7 @@ export default function Live() {
           <ChatProvider
             organizationToken="test_token"
             wsEndpoint="ws://localhost:3001/ws/chat/tech_support"
+            options={{ debug: true }}
           >
             <div className="grid grid-cols-12 gap-6 mt-6">
               {/* Sidebar with chat list */}
@@ -51,7 +52,11 @@ export default function Live() {
                   <div className="flex-1 overflow-y-auto py-4">
                     {selectedChat ? (
                       <div className="space-y-4">
-                        {/* Messages will appear here */}
+                        <Messages
+                          className="bg-white"
+                          containerClassName="px-6"
+                          messageClassName="shadow-sm"
+                        />
                       </div>
                     ) : (
                       <div className="flex items-center justify-center h-full text-muted-foreground">
