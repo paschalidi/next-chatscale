@@ -272,14 +272,20 @@ var config = {
 };
 // src/context/ChatContext/index.tsx
 var ChatContext = React.createContext(null);
+var getChannelName = function() {
+    if (typeof window !== "undefined") {
+        var searchParams = new URLSearchParams(window.location.search);
+        return searchParams.get("cn") || "public";
+    }
+    return "public";
+};
 var ChatProvider = function(param) {
     var children = param.children, organizationToken = param.organizationToken, _param_options = param.options, options = _param_options === void 0 ? {
         reconnectInterval: 3e3,
         maxReconnectAttempts: 5,
         debug: false
     } : _param_options;
-    var searchParams = new URLSearchParams(window.location.search);
-    var channelName = searchParams.get("cn") || "public";
+    var channelName = getChannelName();
     var wsEndpoint = "".concat(config.rust_ws_url, "/chat/").concat(channelName);
     var _React_useState = _sliced_to_array(React.useState(false), 2), isConnected = _React_useState[0], setIsConnected = _React_useState[1];
     var ws = React.useRef(null);
@@ -331,7 +337,6 @@ var ChatProvider = function(param) {
         wsEndpoint
     ]);
     React.useEffect(function() {
-        console.log("ChatProvider mounted");
         connect();
         return function() {
             if (reconnectTimeout.current) {
@@ -343,7 +348,6 @@ var ChatProvider = function(param) {
             }
         };
     }, []);
-    console.log("@@@contetx", messages);
     var value = React.useMemo(function() {
         return {
             organizationToken: organizationToken,
@@ -504,7 +508,6 @@ var Messages = function(param) {
             behavior: "smooth"
         });
     };
-    console.log("@@@Component", messages);
     React4.useEffect(function() {
         scrollToBottom();
     }, [

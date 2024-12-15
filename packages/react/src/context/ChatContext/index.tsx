@@ -1,4 +1,3 @@
-'use client'
 import * as React from 'react';
 import { ChatProviderProps } from "./types";
 import { config } from "../../config";
@@ -21,6 +20,13 @@ interface Message {
   timestamp: number;
 }
 
+const getChannelName = () => {
+  if (typeof window !== 'undefined') {
+    const searchParams = new URLSearchParams(window.location.search);
+    return searchParams.get('cn') || 'public';
+  }
+  return 'public'; // Default fallback
+};
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({
                                                             children,
@@ -31,8 +37,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
                                                               debug: false
                                                             }
                                                           }) => {
-  const searchParams = new URLSearchParams(window.location.search);
-  const channelName = searchParams.get('cn') || 'public';
+  const channelName = getChannelName();
   const wsEndpoint = `${config.rust_ws_url}/chat/${channelName}`;
   const [isConnected, setIsConnected] = React.useState(false);
   const ws = React.useRef<WebSocket | null>(null);
@@ -87,7 +92,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
   }, [wsEndpoint]);
 
   React.useEffect(() => {
-    console.log('ChatProvider mounted');
     connect();
 
     return () => {
@@ -100,8 +104,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
       }
     };
   }, []);
-
-  console.log('@@@contetx', messages);
 
   const value = React.useMemo(() => ({
     organizationToken,

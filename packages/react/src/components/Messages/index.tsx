@@ -15,8 +15,6 @@ export const Messages: React.FC<MessagesProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  console.log('@@@Component', messages);
-
   React.useEffect(() => {
     scrollToBottom();
   }, [messages]);

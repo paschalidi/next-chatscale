@@ -9,6 +9,13 @@ var config = {
 
 // src/context/ChatContext/index.tsx
 var ChatContext = React.createContext(null);
+var getChannelName = () => {
+  if (typeof window !== "undefined") {
+    const searchParams = new URLSearchParams(window.location.search);
+    return searchParams.get("cn") || "public";
+  }
+  return "public";
+};
 var ChatProvider = ({
   children,
   organizationToken,
@@ -18,8 +25,7 @@ var ChatProvider = ({
     debug: false
   }
 }) => {
-  const searchParams = new URLSearchParams(window.location.search);
-  const channelName = searchParams.get("cn") || "public";
+  const channelName = getChannelName();
   const wsEndpoint = `${config.rust_ws_url}/chat/${channelName}`;
   const [isConnected, setIsConnected] = React.useState(false);
   const ws = React.useRef(null);
@@ -69,7 +75,6 @@ var ChatProvider = ({
     }
   }, [wsEndpoint]);
   React.useEffect(() => {
-    console.log("ChatProvider mounted");
     connect();
     return () => {
       if (reconnectTimeout.current) {
@@ -81,7 +86,6 @@ var ChatProvider = ({
       }
     };
   }, []);
-  console.log("@@@contetx", messages);
   const value = React.useMemo(() => ({
     organizationToken,
     channelName,
@@ -201,7 +205,6 @@ var Messages = ({
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
-  console.log("@@@Component", messages);
   React4.useEffect(() => {
     scrollToBottom();
   }, [messages]);
