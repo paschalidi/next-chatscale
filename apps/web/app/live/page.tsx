@@ -29,9 +29,8 @@ function generateRandomUsername(): string {
   const race = races[Math.floor(Math.random() * races.length)];
   const realm = realms[Math.floor(Math.random() * realms.length)];
   const title = titles[Math.floor(Math.random() * titles.length)];
-  const runicCode = Array.from({length: 2}, () => String.fromCharCode(Math.floor(Math.random() * 26) + 65)).join('').toLowerCase();
 
-  return `${title}${race.charAt(0).toUpperCase() + race.slice(1)} of ${realm.charAt(0).toUpperCase() + realm.slice(1)}-${runicCode}`;
+  return `${title} ${race} of ${realm}`;
 }
 
 export default function Live() {
