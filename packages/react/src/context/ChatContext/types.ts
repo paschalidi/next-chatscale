@@ -5,6 +5,7 @@ export interface ChatProviderProps {
   organizationToken: string;
   channelName: string;
   userId: string;
+  userName?: string;
   options?: {
     reconnectInterval?: number;
     maxReconnectAttempts?: number;

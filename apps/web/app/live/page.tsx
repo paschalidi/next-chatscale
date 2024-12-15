@@ -7,25 +7,56 @@ import { DebugPanel } from "@/components/live/debug-panel";
 import { useRouter, useSearchParams } from "next/navigation";
 import { clsx } from "clsx";
 
+function generateRandomUsername(): string {
+  const adjectives = [
+    'Happy', 'Clever', 'Swift', 'Brave', 'Calm', 'Daring', 'Eager',
+    'Fierce', 'Gentle', 'Witty', 'Jolly', 'Kind', 'Loud', 'Merry',
+    'Noble', 'Proud', 'Quiet', 'Rapid', 'Silly', 'Tiny'
+  ];
+
+  const nouns = [
+    'panda', 'fox', 'wolf', 'eagle', 'lion', 'tiger', 'bear',
+    'hawk', 'owl', 'dolphin', 'shark', 'phoenix', 'dragon',
+    'falcon', 'jaguar', 'leopard', 'raven', 'whale', 'zebra', 'cobra',
+    'panther', 'cheetah', 'gorilla', 'elephant', 'rhino',
+    'mongoose', 'hyena', 'lynx', 'koala', 'vulture',
+    'octopus', 'wolf', 'gazelle', 'serpent', 'griffin'
+  ];
+
+  const randomAdjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+  const randomNoun = nouns[Math.floor(Math.random() * nouns.length)];
+  const randomNumber = Math.floor(Math.random() * 100);
+
+  return `${randomAdjective} ${randomNoun} ${randomNumber}`;
+}
+
 export default function Live() {
   const searchParams = useSearchParams();
   const channelName = searchParams.get('cn') || '';
   const [selectedChat, setSelectedChat] = useState<string | null>(channelName);
   const [userId, setUserId] = useState<string>('');
+  const [userName, setUserName] = useState<string>('');
+
   const router = useRouter();
 
   useEffect(() => {
-    // Check if UUID already exists in localStorage
-    let storedUserId = localStorage.getItem('chatUserId') ?? '';
+    // Check if user data already exists in localStorage
+    let storedUserId = localStorage.getItem('chatUserId');
+    let storedUserName = localStorage.getItem('chatUserName');
 
-    // If no UUID exists, generate a new one
-    if (!storedUserId) {
+    // If no user data exists, generate new ones
+    if (!storedUserId || !storedUserName) {
       storedUserId = uuidv4();
+      storedUserName = generateRandomUsername();
+
+      // Store in localStorage
       localStorage.setItem('chatUserId', storedUserId);
+      localStorage.setItem('chatUserName', storedUserName);
     }
 
-    // Set the user ID in state
+    // Set the user ID and name in state
     setUserId(storedUserId);
+    setUserName(storedUserName);
   }, []);
 
   const handleChannelSelection = (channel: string) => {
@@ -52,6 +83,7 @@ export default function Live() {
           </div>
 
           <ChatProvider
+            userName={userName}
             userId={userId}
             channelName={channelName}
             organizationToken="test_token"
@@ -91,7 +123,7 @@ export default function Live() {
                         <Messages
                           containerClassName="px-6"
                           messageClassName={clsx(
-                            'rounded-xl shadow-sm bg-gray-100 w-fit px-5',
+                            'rounded-xl shadow-sm bg-gray-100 w-fit px-4 py-2',
                           )}
                         />
                       </div>

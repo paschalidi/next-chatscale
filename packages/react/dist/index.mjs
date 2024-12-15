@@ -3,8 +3,8 @@ import * as React from "react";
 
 // src/config.ts
 var config = {
-  rust_api_url: "https://api.chatscale.cloud/api",
-  rust_ws_url: "wss://api.chatscale.cloud/ws"
+  rust_api_url: "http://localhost:3001/api",
+  rust_ws_url: "ws://localhost:3001/ws"
 };
 
 // src/context/ChatContext/index.tsx
@@ -14,6 +14,7 @@ var ChatProvider = ({
   organizationToken,
   channelName,
   userId,
+  userName,
   options = {
     reconnectInterval: 3e3,
     maxReconnectAttempts: 5,
@@ -35,7 +36,6 @@ var ChatProvider = ({
         if (options.debug) {
           console.log("Connected to WebSocket");
         }
-        ;
       };
       ws.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
@@ -45,6 +45,7 @@ var ChatProvider = ({
         setMessages((prev) => [...prev, {
           id: crypto.randomUUID(),
           user_id: data.user_id,
+          username: data.username,
           room_id: data.room_id,
           content: data.content,
           timestamp: Date.now()
@@ -87,7 +88,8 @@ var ChatProvider = ({
     isConnected,
     messages,
     ws: ws.current,
-    currentUserId: userId
+    currentUserId: userId,
+    currentUserName: userName
   }), [organizationToken, wsEndpoint, isConnected, messages]);
   return /* @__PURE__ */ React.createElement(ChatContext.Provider, { value }, children);
 };
@@ -150,7 +152,7 @@ var MessageInput = ({
   disabled = false
 }) => {
   const [message, setMessage] = React3.useState("");
-  const { ws, isConnected, channelName, currentUserId } = useChat();
+  const { ws, isConnected, channelName, currentUserId, currentUserName } = useChat();
   const handleSubmit = (e) => {
     e.preventDefault();
     if (message.trim() && ws && isConnected) {
@@ -158,6 +160,7 @@ var MessageInput = ({
         "user_id": currentUserId,
         "room_id": channelName,
         "content": message,
+        "username": currentUserName,
         "timestamp": 0
       }));
       onSend?.(message);
@@ -236,12 +239,12 @@ var Messages = ({
           message.user_id === currentUserId ? "ml-auto items-end" : "items-start"
         )
       },
-      /* @__PURE__ */ React4.createElement("span", { className: "text-xs text-muted-foreground mb-1" }, message.user_id === currentUserId ? "" : message.user_id),
+      /* @__PURE__ */ React4.createElement("span", { className: "text-xs text-muted-foreground" }, message.user_id === currentUserId ? "" : message.username ?? "Some user"),
       /* @__PURE__ */ React4.createElement(
         "div",
         {
           className: clsx(
-            "rounded-lg px-1 py-2 max-w-[90%]",
+            "rounded-lg px-1 max-w-[90%]",
             message.user_id === currentUserId ? "bg-blue-500 text-white self-end" : "bg-neutral-200 text-neutral-800 self-start"
           )
         },

@@ -5,6 +5,7 @@ interface ChatProviderProps {
     organizationToken: string;
     channelName: string;
     userId: string;
+    userName?: string;
     options?: {
         reconnectInterval?: number;
         maxReconnectAttempts?: number;
@@ -12,21 +13,29 @@ interface ChatProviderProps {
     };
 }
 
+interface Message {
+    user_id: string;
+    username?: string;
+    room_id: string;
+    content: string;
+    timestamp: number;
+}
+interface MessagesProps {
+    className?: string;
+    containerClassName?: string;
+    messageClassName?: string;
+    renderMessage?: (message: Message) => React.ReactNode;
+}
+
 interface ChatContextType {
     organizationToken: string;
     channelName: string;
     isConnected: boolean;
     currentUserId: string;
+    currentUserName?: string;
     wsEndpoint: string;
     ws: WebSocket | null;
-    messages: Message$1[];
-}
-interface Message$1 {
-    id: string;
-    user_id: string;
-    room_id: string;
-    content: string;
-    timestamp: number;
+    messages: Message[];
 }
 declare const ChatProvider: React$1.FC<ChatProviderProps>;
 declare const useChat: () => ChatContextType;
@@ -58,19 +67,6 @@ interface MessageInputProps {
 }
 
 declare const MessageInput: React$1.FC<MessageInputProps>;
-
-interface Message {
-    user_id: string;
-    room_id: string;
-    content: string;
-    timestamp: number;
-}
-interface MessagesProps {
-    className?: string;
-    containerClassName?: string;
-    messageClassName?: string;
-    renderMessage?: (message: Message) => React.ReactNode;
-}
 
 declare const Messages: React$1.FC<MessagesProps>;
 

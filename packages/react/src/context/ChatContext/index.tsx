@@ -1,25 +1,20 @@
 import * as React from 'react';
 import { ChatProviderProps } from "./types";
 import { config } from "../../config";
+import { Message } from "../../components/Messages/types";
 
 interface ChatContextType {
   organizationToken: string;
   channelName: string;
   isConnected: boolean;
   currentUserId: string;
+  currentUserName?: string;
   wsEndpoint: string;
   ws: WebSocket | null;
   messages: Message[];
 }
 const ChatContext = React.createContext<ChatContextType | null>(null);
 
-interface Message {
-  id: string;
-  user_id: string;
-  room_id: string;
-  content: string;
-  timestamp: number;
-}
 
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({
@@ -27,6 +22,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
                                                             organizationToken,
                                                             channelName,
                                                             userId,
+                                                            userName,
                                                             options = {
                                                               reconnectInterval: 3000,
                                                               maxReconnectAttempts: 5,
@@ -50,7 +46,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
         if (options.debug) {
           console.log('Connected to WebSocket')
         }
-        ;
       };
 
       ws.current.onmessage = (event) => {
@@ -64,6 +59,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
         setMessages(prev => [...prev, {
           id: crypto.randomUUID(),
           user_id: data.user_id,
+          username: data.username,
           room_id: data.room_id,
           content: data.content,
           timestamp: Date.now()
@@ -109,7 +105,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
     isConnected,
     messages,
     ws: ws.current,
-    currentUserId: userId
+    currentUserId: userId,
+    currentUserName:userName
   }), [organizationToken, wsEndpoint, isConnected,messages]);
 
   return (

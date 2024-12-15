@@ -1,5 +1,6 @@
 export interface Message {
   user_id: string;
+  username?: string;
   room_id: string;
   content: string;
   timestamp: number;

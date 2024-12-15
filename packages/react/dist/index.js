@@ -267,13 +267,13 @@ module.exports = __toCommonJS(src_exports);
 var React = __toESM(require("react"));
 // src/config.ts
 var config = {
-    rust_api_url: "https://api.chatscale.cloud/api",
-    rust_ws_url: "wss://api.chatscale.cloud/ws"
+    rust_api_url: "http://localhost:3001/api",
+    rust_ws_url: "ws://localhost:3001/ws"
 };
 // src/context/ChatContext/index.tsx
 var ChatContext = React.createContext(null);
 var ChatProvider = function(param) {
-    var children = param.children, organizationToken = param.organizationToken, channelName = param.channelName, userId = param.userId, _param_options = param.options, options = _param_options === void 0 ? {
+    var children = param.children, organizationToken = param.organizationToken, channelName = param.channelName, userId = param.userId, userName = param.userName, _param_options = param.options, options = _param_options === void 0 ? {
         reconnectInterval: 3e3,
         maxReconnectAttempts: 5,
         debug: false
@@ -293,7 +293,6 @@ var ChatProvider = function(param) {
                 if (options.debug) {
                     console.log("Connected to WebSocket");
                 }
-                ;
             };
             ws.current.onmessage = function(event) {
                 var data = JSON.parse(event.data);
@@ -305,6 +304,7 @@ var ChatProvider = function(param) {
                         {
                             id: crypto.randomUUID(),
                             user_id: data.user_id,
+                            username: data.username,
                             room_id: data.room_id,
                             content: data.content,
                             timestamp: Date.now()
@@ -349,7 +349,8 @@ var ChatProvider = function(param) {
             isConnected: isConnected,
             messages: messages,
             ws: ws.current,
-            currentUserId: userId
+            currentUserId: userId,
+            currentUserName: userName
         };
     }, [
         organizationToken,
@@ -424,7 +425,7 @@ var React3 = __toESM(require("react"));
 var MessageInput = function(param) {
     var _param_placeholder = param.placeholder, placeholder = _param_placeholder === void 0 ? "Type a message..." : _param_placeholder, onSend = param.onSend, _param_maxLength = param.maxLength, maxLength = _param_maxLength === void 0 ? 1e3 : _param_maxLength, _param_disabled = param.disabled, disabled = _param_disabled === void 0 ? false : _param_disabled;
     var _React3_useState = _sliced_to_array(React3.useState(""), 2), message = _React3_useState[0], setMessage = _React3_useState[1];
-    var _useChat = useChat(), ws = _useChat.ws, isConnected = _useChat.isConnected, channelName = _useChat.channelName, currentUserId = _useChat.currentUserId;
+    var _useChat = useChat(), ws = _useChat.ws, isConnected = _useChat.isConnected, channelName = _useChat.channelName, currentUserId = _useChat.currentUserId, currentUserName = _useChat.currentUserName;
     var handleSubmit = function(e) {
         e.preventDefault();
         if (message.trim() && ws && isConnected) {
@@ -432,6 +433,7 @@ var MessageInput = function(param) {
                 "user_id": currentUserId,
                 "room_id": channelName,
                 "content": message,
+                "username": currentUserName,
                 "timestamp": 0
             }));
             onSend === null || onSend === void 0 ? void 0 : onSend(message);
@@ -490,13 +492,14 @@ var Messages = function(param) {
         messages
     ]);
     var defaultRenderMessage = function(message) {
+        var _message_username;
         return /* @__PURE__ */ React4.createElement("div", {
             key: message.timestamp,
             className: clsx(messageClassName, "flex flex-col max-w-[70%]", message.user_id === currentUserId ? "ml-auto items-end" : "items-start")
         }, /* @__PURE__ */ React4.createElement("span", {
-            className: "text-xs text-muted-foreground mb-1"
-        }, message.user_id === currentUserId ? "" : message.user_id), /* @__PURE__ */ React4.createElement("div", {
-            className: clsx("rounded-lg px-1 py-2 max-w-[90%]", message.user_id === currentUserId ? "bg-blue-500 text-white self-end" : "bg-neutral-200 text-neutral-800 self-start")
+            className: "text-xs text-muted-foreground"
+        }, message.user_id === currentUserId ? "" : (_message_username = message.username) !== null && _message_username !== void 0 ? _message_username : "Some user"), /* @__PURE__ */ React4.createElement("div", {
+            className: clsx("rounded-lg px-1 max-w-[90%]", message.user_id === currentUserId ? "bg-blue-500 text-white self-end" : "bg-neutral-200 text-neutral-800 self-start")
         }, /* @__PURE__ */ React4.createElement("p", null, message.content)));
     };
     return /* @__PURE__ */ React4.createElement("div", {

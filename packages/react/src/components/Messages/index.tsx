@@ -32,14 +32,14 @@ export const Messages: React.FC<MessagesProps> = ({
             : 'items-start'
         )}
       >
-      <span className="text-xs text-muted-foreground mb-1">
+      <span className="text-xs text-muted-foreground">
         {message.user_id === currentUserId
           ? ''
-          : message.user_id}
+          : message.username ?? 'Some user'}
       </span>
         <div
           className={clsx(
-            'rounded-lg px-1 py-2 max-w-[90%]',
+            'rounded-lg px-1 max-w-[90%]',
             message.user_id === currentUserId
               ? 'bg-blue-500 text-white self-end'
               : 'bg-neutral-200 text-neutral-800 self-start'

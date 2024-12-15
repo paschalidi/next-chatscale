@@ -10,7 +10,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
                                                           }) => {
   const [message, setMessage] = React.useState('');
-  const { ws, isConnected, channelName, currentUserId } = useChat();
+  const { ws, isConnected, channelName, currentUserId, currentUserName } = useChat();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,6 +19,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         "user_id": currentUserId,
         "room_id": channelName,
         "content": message,
+        "username": currentUserName,
         "timestamp": 0
       }));
       onSend?.(message);
