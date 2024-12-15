@@ -4,4 +4,5 @@ export interface MessageInputProps {
   attachments?: boolean;
   maxLength?: number;
   disabled?: boolean;
+  userId: string;
 }

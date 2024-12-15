@@ -1,14 +1,15 @@
 import * as React from 'react';
 import { Message, MessagesProps } from './types';
 import { useChat } from '../../context/ChatContext';
+import { clsx } from "clsx";
 
 export const Messages: React.FC<MessagesProps> = ({
                                                     className = '',
                                                     containerClassName = '',
-                                                    messageClassName = () => '',
+                                                    messageClassName = '',
                                                     renderMessage
                                                   }) => {
-  const { messages } = useChat();
+  const { messages, currentUserId } = useChat();
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -22,17 +23,31 @@ export const Messages: React.FC<MessagesProps> = ({
   const defaultRenderMessage = (message: Message) => {
     return (
       <div
-        className={messageClassName({ isCurrentUser: message.user_id === "" })}
+        key={message.timestamp}
+        className={clsx(
+          messageClassName,
+          'flex flex-col max-w-[70%]',
+          message.user_id === currentUserId
+            ? 'ml-auto items-end'
+            : 'items-start'
+        )}
       >
-        <div className="flex justify-between items-start gap-2">
-          <span className="font-medium">{message.user_id}</span>
-          <span className="text-xs opacity-70">
-          {new Date(message.timestamp * 1000).toLocaleTimeString()}
-        </span>
+      <span className="text-xs text-muted-foreground mb-1">
+        {message.user_id === currentUserId
+          ? ''
+          : message.user_id}
+      </span>
+        <div
+          className={clsx(
+            'rounded-lg px-1 py-2 max-w-[90%]',
+            message.user_id === currentUserId
+              ? 'bg-blue-500 text-white self-end'
+              : 'bg-neutral-200 text-neutral-800 self-start'
+          )}
+        >
+          <p>{message.content}</p>
         </div>
-        <p className="mt-1">{message.content}</p>
-      </div>
-    )
+      </div>)
   };
 
   return (

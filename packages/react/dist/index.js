@@ -273,7 +273,7 @@ var config = {
 // src/context/ChatContext/index.tsx
 var ChatContext = React.createContext(null);
 var ChatProvider = function(param) {
-    var children = param.children, organizationToken = param.organizationToken, channelName = param.channelName, _param_options = param.options, options = _param_options === void 0 ? {
+    var children = param.children, organizationToken = param.organizationToken, channelName = param.channelName, userId = param.userId, _param_options = param.options, options = _param_options === void 0 ? {
         reconnectInterval: 3e3,
         maxReconnectAttempts: 5,
         debug: false
@@ -285,13 +285,15 @@ var ChatProvider = function(param) {
     var reconnectTimeout = React.useRef();
     var _React_useState1 = _sliced_to_array(React.useState([]), 2), messages = _React_useState1[0], setMessages = _React_useState1[1];
     var connect = React.useCallback(function() {
-        console.log("Connecting to WebSocket", wsEndpoint);
         try {
             ws.current = new WebSocket(wsEndpoint);
             ws.current.onopen = function() {
                 setIsConnected(true);
                 reconnectAttempts.current = 0;
-                if (options.debug) console.log("Connected to WebSocket");
+                if (options.debug) {
+                    console.log("Connected to WebSocket");
+                }
+                ;
             };
             ws.current.onmessage = function(event) {
                 var data = JSON.parse(event.data);
@@ -302,9 +304,8 @@ var ChatProvider = function(param) {
                     return _to_consumable_array(prev).concat([
                         {
                             id: crypto.randomUUID(),
-                            user_id: "data.user_id",
-                            // @todo get a real user_id
-                            room_id: "data.user_id",
+                            user_id: data.user_id,
+                            room_id: data.room_id,
                             content: data.content,
                             timestamp: Date.now()
                         }
@@ -347,7 +348,8 @@ var ChatProvider = function(param) {
             wsEndpoint: wsEndpoint,
             isConnected: isConnected,
             messages: messages,
-            ws: ws.current
+            ws: ws.current,
+            currentUserId: userId
         };
     }, [
         organizationToken,
@@ -422,13 +424,13 @@ var React3 = __toESM(require("react"));
 var MessageInput = function(param) {
     var _param_placeholder = param.placeholder, placeholder = _param_placeholder === void 0 ? "Type a message..." : _param_placeholder, onSend = param.onSend, _param_maxLength = param.maxLength, maxLength = _param_maxLength === void 0 ? 1e3 : _param_maxLength, _param_disabled = param.disabled, disabled = _param_disabled === void 0 ? false : _param_disabled;
     var _React3_useState = _sliced_to_array(React3.useState(""), 2), message = _React3_useState[0], setMessage = _React3_useState[1];
-    var _useChat = useChat(), ws = _useChat.ws, isConnected = _useChat.isConnected;
+    var _useChat = useChat(), ws = _useChat.ws, isConnected = _useChat.isConnected, channelName = _useChat.channelName, currentUserId = _useChat.currentUserId;
     var handleSubmit = function(e) {
         e.preventDefault();
         if (message.trim() && ws && isConnected) {
             ws.send(JSON.stringify({
-                "user_id": "bob_dev",
-                "room_id": "tech_support",
+                "user_id": currentUserId,
+                "room_id": channelName,
                 "content": message,
                 "timestamp": 0
             }));
@@ -457,11 +459,24 @@ var MessageInput = function(param) {
 };
 // src/components/Messages/index.tsx
 var React4 = __toESM(require("react"));
+// ../../node_modules/.pnpm/clsx@2.1.1/node_modules/clsx/dist/clsx.mjs
+function r(e) {
+    var t, f, n = "";
+    if ("string" == typeof e || "number" == typeof e) n += e;
+    else if ("object" == (typeof e === "undefined" ? "undefined" : _type_of(e))) if (Array.isArray(e)) {
+        var o = e.length;
+        for(t = 0; t < o; t++)e[t] && (f = r(e[t])) && (n && (n += " "), n += f);
+    } else for(f in e)e[f] && (n && (n += " "), n += f);
+    return n;
+}
+function clsx() {
+    for(var e, t, f = 0, n = "", o = arguments.length; f < o; f++)(e = arguments[f]) && (t = r(e)) && (n && (n += " "), n += t);
+    return n;
+}
+// src/components/Messages/index.tsx
 var Messages = function(param) {
-    var _param_className = param.className, className = _param_className === void 0 ? "" : _param_className, _param_containerClassName = param.containerClassName, containerClassName = _param_containerClassName === void 0 ? "" : _param_containerClassName, _param_messageClassName = param.messageClassName, messageClassName = _param_messageClassName === void 0 ? function() {
-        return "";
-    } : _param_messageClassName, renderMessage = param.renderMessage;
-    var messages = useChat().messages;
+    var _param_className = param.className, className = _param_className === void 0 ? "" : _param_className, _param_containerClassName = param.containerClassName, containerClassName = _param_containerClassName === void 0 ? "" : _param_containerClassName, _param_messageClassName = param.messageClassName, messageClassName = _param_messageClassName === void 0 ? "" : _param_messageClassName, renderMessage = param.renderMessage;
+    var _useChat = useChat(), messages = _useChat.messages, currentUserId = _useChat.currentUserId;
     var messagesEndRef = React4.useRef(null);
     var scrollToBottom = function() {
         var _messagesEndRef_current;
@@ -476,18 +491,13 @@ var Messages = function(param) {
     ]);
     var defaultRenderMessage = function(message) {
         return /* @__PURE__ */ React4.createElement("div", {
-            className: messageClassName({
-                isCurrentUser: message.user_id === ""
-            })
-        }, /* @__PURE__ */ React4.createElement("div", {
-            className: "flex justify-between items-start gap-2"
+            key: message.timestamp,
+            className: clsx(messageClassName, "flex flex-col max-w-[70%]", message.user_id === currentUserId ? "ml-auto items-end" : "items-start")
         }, /* @__PURE__ */ React4.createElement("span", {
-            className: "font-medium"
-        }, message.user_id), /* @__PURE__ */ React4.createElement("span", {
-            className: "text-xs opacity-70"
-        }, new Date(message.timestamp * 1e3).toLocaleTimeString())), /* @__PURE__ */ React4.createElement("p", {
-            className: "mt-1"
-        }, message.content));
+            className: "text-xs text-muted-foreground mb-1"
+        }, message.user_id === currentUserId ? "" : message.user_id), /* @__PURE__ */ React4.createElement("div", {
+            className: clsx("rounded-lg px-1 py-2 max-w-[90%]", message.user_id === currentUserId ? "bg-blue-500 text-white self-end" : "bg-neutral-200 text-neutral-800 self-start")
+        }, /* @__PURE__ */ React4.createElement("p", null, message.content)));
     };
     return /* @__PURE__ */ React4.createElement("div", {
         className: "flex flex-col h-full ".concat(className)

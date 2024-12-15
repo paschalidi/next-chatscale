@@ -13,6 +13,7 @@ var ChatProvider = ({
   children,
   organizationToken,
   channelName,
+  userId,
   options = {
     reconnectInterval: 3e3,
     maxReconnectAttempts: 5,
@@ -26,14 +27,15 @@ var ChatProvider = ({
   const reconnectTimeout = React.useRef();
   const [messages, setMessages] = React.useState([]);
   const connect = React.useCallback(() => {
-    console.log("Connecting to WebSocket", wsEndpoint);
     try {
       ws.current = new WebSocket(wsEndpoint);
       ws.current.onopen = () => {
         setIsConnected(true);
         reconnectAttempts.current = 0;
-        if (options.debug)
+        if (options.debug) {
           console.log("Connected to WebSocket");
+        }
+        ;
       };
       ws.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
@@ -42,9 +44,8 @@ var ChatProvider = ({
         }
         setMessages((prev) => [...prev, {
           id: crypto.randomUUID(),
-          user_id: "data.user_id",
-          // @todo get a real user_id
-          room_id: "data.user_id",
+          user_id: data.user_id,
+          room_id: data.room_id,
           content: data.content,
           timestamp: Date.now()
         }]);
@@ -85,7 +86,8 @@ var ChatProvider = ({
     wsEndpoint,
     isConnected,
     messages,
-    ws: ws.current
+    ws: ws.current,
+    currentUserId: userId
   }), [organizationToken, wsEndpoint, isConnected, messages]);
   return /* @__PURE__ */ React.createElement(ChatContext.Provider, { value }, children);
 };
@@ -148,13 +150,13 @@ var MessageInput = ({
   disabled = false
 }) => {
   const [message, setMessage] = React3.useState("");
-  const { ws, isConnected } = useChat();
+  const { ws, isConnected, channelName, currentUserId } = useChat();
   const handleSubmit = (e) => {
     e.preventDefault();
     if (message.trim() && ws && isConnected) {
       ws.send(JSON.stringify({
-        "user_id": "bob_dev",
-        "room_id": "tech_support",
+        "user_id": currentUserId,
+        "room_id": channelName,
         "content": message,
         "timestamp": 0
       }));
@@ -186,13 +188,36 @@ var MessageInput = ({
 
 // src/components/Messages/index.tsx
 import * as React4 from "react";
+
+// ../../node_modules/.pnpm/clsx@2.1.1/node_modules/clsx/dist/clsx.mjs
+function r(e) {
+  var t, f, n = "";
+  if ("string" == typeof e || "number" == typeof e)
+    n += e;
+  else if ("object" == typeof e)
+    if (Array.isArray(e)) {
+      var o = e.length;
+      for (t = 0; t < o; t++)
+        e[t] && (f = r(e[t])) && (n && (n += " "), n += f);
+    } else
+      for (f in e)
+        e[f] && (n && (n += " "), n += f);
+  return n;
+}
+function clsx() {
+  for (var e, t, f = 0, n = "", o = arguments.length; f < o; f++)
+    (e = arguments[f]) && (t = r(e)) && (n && (n += " "), n += t);
+  return n;
+}
+
+// src/components/Messages/index.tsx
 var Messages = ({
   className = "",
   containerClassName = "",
-  messageClassName = () => "",
+  messageClassName = "",
   renderMessage
 }) => {
-  const { messages } = useChat();
+  const { messages, currentUserId } = useChat();
   const messagesEndRef = React4.useRef(null);
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -204,10 +229,24 @@ var Messages = ({
     return /* @__PURE__ */ React4.createElement(
       "div",
       {
-        className: messageClassName({ isCurrentUser: message.user_id === "" })
+        key: message.timestamp,
+        className: clsx(
+          messageClassName,
+          "flex flex-col max-w-[70%]",
+          message.user_id === currentUserId ? "ml-auto items-end" : "items-start"
+        )
       },
-      /* @__PURE__ */ React4.createElement("div", { className: "flex justify-between items-start gap-2" }, /* @__PURE__ */ React4.createElement("span", { className: "font-medium" }, message.user_id), /* @__PURE__ */ React4.createElement("span", { className: "text-xs opacity-70" }, new Date(message.timestamp * 1e3).toLocaleTimeString())),
-      /* @__PURE__ */ React4.createElement("p", { className: "mt-1" }, message.content)
+      /* @__PURE__ */ React4.createElement("span", { className: "text-xs text-muted-foreground mb-1" }, message.user_id === currentUserId ? "" : message.user_id),
+      /* @__PURE__ */ React4.createElement(
+        "div",
+        {
+          className: clsx(
+            "rounded-lg px-1 py-2 max-w-[90%]",
+            message.user_id === currentUserId ? "bg-blue-500 text-white self-end" : "bg-neutral-200 text-neutral-800 self-start"
+          )
+        },
+        /* @__PURE__ */ React4.createElement("p", null, message.content)
+      )
     );
   };
   return /* @__PURE__ */ React4.createElement("div", { className: `flex flex-col h-full ${className}` }, /* @__PURE__ */ React4.createElement("div", { className: `flex-1 overflow-y-auto p-4 space-y-4 ${containerClassName}` }, messages.map((message, index) => /* @__PURE__ */ React4.createElement("div", { key: index, className: "max-w-[70%]" }, renderMessage ? renderMessage(message) : defaultRenderMessage(message))), /* @__PURE__ */ React4.createElement("div", { ref: messagesEndRef })));

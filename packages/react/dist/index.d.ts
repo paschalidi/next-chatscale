@@ -4,6 +4,7 @@ interface ChatProviderProps {
     children: React$1.ReactNode;
     organizationToken: string;
     channelName: string;
+    userId: string;
     options?: {
         reconnectInterval?: number;
         maxReconnectAttempts?: number;
@@ -15,6 +16,7 @@ interface ChatContextType {
     organizationToken: string;
     channelName: string;
     isConnected: boolean;
+    currentUserId: string;
     wsEndpoint: string;
     ws: WebSocket | null;
     messages: Message$1[];
@@ -53,6 +55,7 @@ interface MessageInputProps {
     attachments?: boolean;
     maxLength?: number;
     disabled?: boolean;
+    userId: string;
 }
 
 declare const MessageInput: React$1.FC<MessageInputProps>;
@@ -66,9 +69,7 @@ interface Message {
 interface MessagesProps {
     className?: string;
     containerClassName?: string;
-    messageClassName?: ({ isCurrentUser }: {
-        isCurrentUser: boolean;
-    }) => string;
+    messageClassName?: string;
     renderMessage?: (message: Message) => React.ReactNode;
 }
 

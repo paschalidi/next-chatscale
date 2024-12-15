@@ -8,6 +8,6 @@ export interface Message {
 export interface MessagesProps {
   className?: string;
   containerClassName?: string;
-  messageClassName?: ({ isCurrentUser }: { isCurrentUser: boolean }) => string;
+  messageClassName?: string;
   renderMessage?: (message: Message) => React.ReactNode;
 }

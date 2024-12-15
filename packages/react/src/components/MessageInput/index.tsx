@@ -6,17 +6,18 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                                                             placeholder = 'Type a message...',
                                                             onSend,
                                                             maxLength = 1000,
-                                                            disabled = false
+                                                            disabled = false,
+
                                                           }) => {
   const [message, setMessage] = React.useState('');
-  const { ws, isConnected } = useChat();
+  const { ws, isConnected, channelName, currentUserId } = useChat();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && ws && isConnected) {
       ws.send(JSON.stringify({
-        "user_id": "bob_dev",
-        "room_id": "tech_support",
+        "user_id": currentUserId,
+        "room_id": channelName,
         "content": message,
         "timestamp": 0
       }));

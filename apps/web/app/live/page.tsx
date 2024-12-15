@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from 'uuid';
 import { ChatList, ChatProvider, MessageInput, Messages } from "@chatscale/react";
 import { DebugPanel } from "@/components/live/debug-panel";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -10,7 +11,22 @@ export default function Live() {
   const searchParams = useSearchParams();
   const channelName = searchParams.get('cn') || '';
   const [selectedChat, setSelectedChat] = useState<string | null>(channelName);
+  const [userId, setUserId] = useState<string>('');
   const router = useRouter();
+
+  useEffect(() => {
+    // Check if UUID already exists in localStorage
+    let storedUserId = localStorage.getItem('chatUserId') ?? '';
+
+    // If no UUID exists, generate a new one
+    if (!storedUserId) {
+      storedUserId = uuidv4();
+      localStorage.setItem('chatUserId', storedUserId);
+    }
+
+    // Set the user ID in state
+    setUserId(storedUserId);
+  }, []);
 
   const handleChannelSelection = (channel: string) => {
     setSelectedChat(channel);
@@ -28,9 +44,15 @@ export default function Live() {
             <p className="text-muted-foreground">
               This is a live demo of the ChatScale components. Connect to a test channel and try it out.
             </p>
+            {userId && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Your User ID: {userId}
+              </p>
+            )}
           </div>
 
           <ChatProvider
+            userId={userId}
             channelName={channelName}
             organizationToken="test_token"
             options={{ debug: true }}
@@ -68,9 +90,8 @@ export default function Live() {
                       <div className="space-y-4">
                         <Messages
                           containerClassName="px-6"
-                          messageClassName={({ isCurrentUser }) => clsx(
-                            'p-3 rounded-xl shadow-sm',
-                            isCurrentUser ? 'bg-blue-500 text-white ml-auto' : 'bg-gray-100'
+                          messageClassName={clsx(
+                            'py-1 rounded-xl shadow-sm bg-gray-100 w-min px-5',
                           )}
                         />
                       </div>
@@ -91,10 +112,7 @@ export default function Live() {
                 </div>
               </div>
             </div>
-
-
           </ChatProvider>
-
         </div>
       </div>
     </div>
