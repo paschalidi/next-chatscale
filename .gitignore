@@ -36,4 +36,3 @@ yarn-error.log*
 *.tsbuildinfo
 apps/web/next-env.d.ts
 apps/web/out
-packages/react/dist
