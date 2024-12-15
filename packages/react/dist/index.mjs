@@ -9,23 +9,16 @@ var config = {
 
 // src/context/ChatContext/index.tsx
 var ChatContext = React.createContext(null);
-var getChannelName = () => {
-  if (typeof window !== "undefined") {
-    const searchParams = new URLSearchParams(window.location.search);
-    return searchParams.get("cn") || "public";
-  }
-  return "public";
-};
 var ChatProvider = ({
   children,
   organizationToken,
+  channelName,
   options = {
     reconnectInterval: 3e3,
     maxReconnectAttempts: 5,
     debug: false
   }
 }) => {
-  const channelName = getChannelName();
   const wsEndpoint = `${config.rust_ws_url}/chat/${channelName}`;
   const [isConnected, setIsConnected] = React.useState(false);
   const ws = React.useRef(null);
@@ -113,7 +106,13 @@ var ChatList = ({
   renderItem
 }) => {
   const { organizationToken } = useChat();
-  const [chats, setChats] = React2.useState([]);
+  const [chats, setChats] = React2.useState([
+    {
+      id: "public",
+      name: "public",
+      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
+    }
+  ]);
   const [isLoading, setIsLoading] = React2.useState(true);
   React2.useEffect(() => {
     const fetchChats = async () => {

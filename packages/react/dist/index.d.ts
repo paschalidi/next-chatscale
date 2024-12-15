@@ -3,6 +3,7 @@ import * as React$1 from 'react';
 interface ChatProviderProps {
     children: React$1.ReactNode;
     organizationToken: string;
+    channelName: string;
     options?: {
         reconnectInterval?: number;
         maxReconnectAttempts?: number;

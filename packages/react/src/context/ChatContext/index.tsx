@@ -20,24 +20,17 @@ interface Message {
   timestamp: number;
 }
 
-const getChannelName = () => {
-  if (typeof window !== 'undefined') {
-    const searchParams = new URLSearchParams(window.location.search);
-    return searchParams.get('cn') || 'public';
-  }
-  return 'public'; // Default fallback
-};
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({
                                                             children,
                                                             organizationToken,
+                                                            channelName,
                                                             options = {
                                                               reconnectInterval: 3000,
                                                               maxReconnectAttempts: 5,
                                                               debug: false
                                                             }
                                                           }) => {
-  const channelName = getChannelName();
   const wsEndpoint = `${config.rust_ws_url}/chat/${channelName}`;
   const [isConnected, setIsConnected] = React.useState(false);
   const ws = React.useRef<WebSocket | null>(null);

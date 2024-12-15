@@ -9,7 +9,14 @@ export const ChatList: React.FC<ChatListProps> = ({
                                                     renderItem
                                                   }) => {
   const { organizationToken } = useChat();
-  const [chats, setChats] = React.useState<Chat[]>([]);
+  const [chats, setChats] = React.useState<Chat[]>([
+    {
+      id: 'public',
+      name: 'public',
+      updatedAt: new Date().toISOString()
+    }
+
+  ]);
   const [isLoading, setIsLoading] = React.useState(true);
 
   React.useEffect(() => {

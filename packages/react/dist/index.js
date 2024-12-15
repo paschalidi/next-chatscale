@@ -272,20 +272,12 @@ var config = {
 };
 // src/context/ChatContext/index.tsx
 var ChatContext = React.createContext(null);
-var getChannelName = function() {
-    if (typeof window !== "undefined") {
-        var searchParams = new URLSearchParams(window.location.search);
-        return searchParams.get("cn") || "public";
-    }
-    return "public";
-};
 var ChatProvider = function(param) {
-    var children = param.children, organizationToken = param.organizationToken, _param_options = param.options, options = _param_options === void 0 ? {
+    var children = param.children, organizationToken = param.organizationToken, channelName = param.channelName, _param_options = param.options, options = _param_options === void 0 ? {
         reconnectInterval: 3e3,
         maxReconnectAttempts: 5,
         debug: false
     } : _param_options;
-    var channelName = getChannelName();
     var wsEndpoint = "".concat(config.rust_ws_url, "/chat/").concat(channelName);
     var _React_useState = _sliced_to_array(React.useState(false), 2), isConnected = _React_useState[0], setIsConnected = _React_useState[1];
     var ws = React.useRef(null);
@@ -379,7 +371,13 @@ var React2 = __toESM(require("react"));
 var ChatList = function(param) {
     var _param_limit = param.limit, limit = _param_limit === void 0 ? 50 : _param_limit, onChatSelect = param.onChatSelect, _param_customStyles = param.customStyles, customStyles = _param_customStyles === void 0 ? {} : _param_customStyles, renderItem = param.renderItem;
     var organizationToken = useChat().organizationToken;
-    var _React2_useState = _sliced_to_array(React2.useState([]), 2), chats = _React2_useState[0], setChats = _React2_useState[1];
+    var _React2_useState = _sliced_to_array(React2.useState([
+        {
+            id: "public",
+            name: "public",
+            updatedAt: /* @__PURE__ */ new Date().toISOString()
+        }
+    ]), 2), chats = _React2_useState[0], setChats = _React2_useState[1];
     var _React2_useState1 = _sliced_to_array(React2.useState(true), 2), isLoading = _React2_useState1[0], setIsLoading = _React2_useState1[1];
     React2.useEffect(function() {
         var fetchChats = /*#__PURE__*/ function() {

@@ -3,9 +3,18 @@
 import { useState } from "react";
 import { ChatList, ChatProvider, MessageInput, Messages } from "@chatscale/react";
 import { DebugPanel } from "@/components/live/debug-panel";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Live() {
-  const [selectedChat, setSelectedChat] = useState<string | null>('public');
+  const searchParams = useSearchParams();
+  const channelName = searchParams.get('cn') || '';
+  const [selectedChat, setSelectedChat] = useState<string | null>(channelName);
+  const router = useRouter();
+
+  const handleChannelSelection = (channel: string) => {
+    setSelectedChat(channel);
+    router.replace(`?cn=${channel}`, { scroll: false });
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -21,16 +30,18 @@ export default function Live() {
           </div>
 
           <ChatProvider
+            channelName={channelName}
             organizationToken="test_token"
             options={{ debug: true }}
           >
             <DebugPanel/>
+
             <div className="grid grid-cols-12 gap-6 mt-6">
               {/* Sidebar with chat list */}
               <div className="col-span-4 border rounded-lg p-4">
                 <h3 className="font-medium mb-4">Channels</h3>
                 <ChatList
-                  onChatSelect={setSelectedChat}
+                  onChatSelect={handleChannelSelection}
                   customStyles={{
                     container: 'space-y-2',
                     chatItem: 'p-3 rounded-lg hover:bg-accent cursor-pointer'
