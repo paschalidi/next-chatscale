@@ -24,6 +24,7 @@ export default function Live() {
             organizationToken="test_token"
             options={{ debug: true }}
           >
+            <DebugPanel/>
             <div className="grid grid-cols-12 gap-6 mt-6">
               {/* Sidebar with chat list */}
               <div className="col-span-4 border rounded-lg p-4">
@@ -75,7 +76,7 @@ export default function Live() {
               </div>
             </div>
 
-            <DebugPanel/>
+
           </ChatProvider>
 
         </div>
