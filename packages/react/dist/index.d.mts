@@ -55,7 +55,6 @@ interface MessageInputProps {
     attachments?: boolean;
     maxLength?: number;
     disabled?: boolean;
-    userId: string;
 }
 
 declare const MessageInput: React$1.FC<MessageInputProps>;
