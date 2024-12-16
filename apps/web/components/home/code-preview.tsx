@@ -34,12 +34,6 @@ function App() {
               </span>
               <span>Type-safe React components powered by our Rust backend</span>
             </p>
-            <p className="flex items-center gap-2">
-              <span className="font-mono bg-primary/10 px-2 py-1 rounded text-primary">
-                @chatscale/sdk
-              </span>
-              <span>Low-level Rust-compiled WebAssembly SDK for custom implementations</span>
-            </p>
           </div>
         </div>
       </div>
