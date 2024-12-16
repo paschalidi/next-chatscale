@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ChatProviderProps } from "./types";
 import { config } from "../../config";
 import { Message } from "../../components/Messages/types";
@@ -14,9 +14,8 @@ interface ChatContextType {
   ws: WebSocket | null;
   messages: Message[];
 }
+
 const ChatContext = React.createContext<ChatContextType | null>(null);
-
-
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({
                                                             children,
@@ -31,14 +30,19 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
                                                             }
                                                           }) => {
   const wsEndpoint = useMemo(() => `${config.rust_ws_url}/chat/${channelName}`, [channelName]);
-  const [isConnected, setIsConnected] = React.useState(false);
-  const ws = React.useRef<WebSocket | null>(null);
-  const reconnectAttempts = React.useRef(0);
-  const reconnectTimeout = React.useRef<number>();
-  const [messages, setMessages] = React.useState<Message[]>([]);
+  const [isConnected, setIsConnected] = useState(false);
+  const ws = useRef<WebSocket | null>(null);
+  const reconnectAttempts = useRef(0);
+  const reconnectTimeout = useRef<number>();
+  const [messages, setMessages] = useState<Message[]>([]);
 
-  console.log(wsEndpoint)
-  const connect = React.useCallback(() => {
+  const connect = useCallback(() => {
+    // Close existing connection if it exists
+    if (ws.current) {
+      ws.current.close();
+      ws.current = null;
+    }
+
     try {
       ws.current = new WebSocket(wsEndpoint);
 
@@ -46,7 +50,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
         setIsConnected(true);
         reconnectAttempts.current = 0;
         if (options.debug) {
-          console.log('Connected to WebSocket')
+          console.log('Connected to WebSocket');
         }
       };
 
@@ -84,10 +88,10 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
     } catch (error) {
       if (options.debug) console.error('WebSocket connection error:', error);
     }
-  }, [wsEndpoint]);
+  }, [wsEndpoint, options]);
 
-  console.log('messages', channelName);
-  React.useEffect(() => {
+  useEffect(() => {
+    // Reconnect when channelName changes
     connect();
 
     return () => {
@@ -99,9 +103,9 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
         ws.current = null;
       }
     };
-  }, []);
+  }, [channelName, connect]); // Add channelName and connect to dependency array
 
-  const value = React.useMemo(() => ({
+  const value = useMemo(() => ({
     organizationToken,
     channelName,
     wsEndpoint,
@@ -109,8 +113,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
     messages,
     ws: ws.current,
     currentUserId: userId,
-    currentUserName:userName
-  }), [organizationToken, wsEndpoint, isConnected,messages]);
+    currentUserName: userName
+  }), [organizationToken, channelName, wsEndpoint, isConnected, messages, userId, userName]);
 
   return (
     <ChatContext.Provider value={value}>

@@ -8,29 +8,29 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { clsx } from "clsx";
 
 function generateRandomUsername(): string {
-  const races = [
-    'elf', 'dwarf', 'wizard', 'rogue', 'mage', 'knight', 'druid',
-    'paladin', 'ranger', 'bard', 'necromancer', 'shaman', 'warlock',
-    'barbarian', 'monk', 'sorcerer', 'assassin', 'cleric', 'summoner', 'berserker'
+  const animals = [
+    'lion', 'wolf', 'eagle', 'fox', 'bear', 'tiger', 'owl', 'shark', 'dolphin',
+    'panther', 'wolf', 'hawk', 'leopard', 'cheetah', 'cobra', 'raven', 'jaguar',
+    'gorilla', 'elephant', 'rhino', 'koala', 'lynx', 'hyena', 'gazelle', 'serpent'
   ];
 
-  const realms = [
-    'shadow', 'storm', 'frost', 'fire', 'moon', 'sun', 'wind',
-    'dark', 'light', 'void', 'chaos', 'order', 'blood', 'iron',
-    'crystal', 'mist', 'dream', 'eternal', 'savage', 'celestial'
+  const habitats = [
+    'mountain', 'forest', 'ocean', 'desert', 'jungle', 'river', 'canyon', 'plains',
+    'tundra', 'savanna', 'cave', 'island', 'reef', 'prairie', 'peak', 'valley',
+    'glacier', 'swamp', 'meadow', 'wilderness'
   ];
 
   const titles = [
-    'Lord', 'Lady', 'Master', 'Guardian', 'Sage', 'Keeper', 'Champion',
-    'Archmage', 'Elder', 'Sovereign', 'Warden', 'Protector', 'Mystic',
-    'Arch', 'Blade', 'Flame', 'Shadow', 'Grand', 'High', 'Eternal'
+    'Wild', 'Silent', 'Swift', 'Brave', 'Gentle', 'Fierce', 'Noble', 'Ancient',
+    'Wise', 'Lone', 'Free', 'Bold', 'Hidden', 'Mystic', 'Shadow', 'Light',
+    'Storm', 'Calm', 'Spirit', 'Guardian'
   ];
 
-  const race = races[Math.floor(Math.random() * races.length)];
-  const realm = realms[Math.floor(Math.random() * realms.length)];
+  const animal = animals[Math.floor(Math.random() * animals.length)];
+  const habitat = habitats[Math.floor(Math.random() * habitats.length)];
   const title = titles[Math.floor(Math.random() * titles.length)];
 
-  return `${title} ${race} of ${realm}`;
+  return `${title} ${animal} of ${habitat}`;
 }
 
 export default function Live() {
@@ -100,8 +100,8 @@ export default function Live() {
                 <h3 className="font-medium mb-4">Channels</h3>
                 <ChatList
                   renderItem={(chat) => <div className={clsx({
-                    'bg-accent p-3': selectedChat === chat.name,
-                  }, 'rounded-lg hover:bg-neutral-200 cursor-pointer')}># {chat.name}</div>}
+                    'bg-accent': selectedChat === chat.name,
+                  }, 'rounded-lg hover:bg-neutral-200 cursor-pointer p-3')}># {chat.name}</div>}
                   onChatSelect={handleChannelSelection}
                   customStyles={{
                     container: 'space-y-2',

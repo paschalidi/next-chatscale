@@ -284,13 +284,16 @@ var ChatProvider = function(param) {
     }, [
         channelName
     ]);
-    var _React_useState = _sliced_to_array(React.useState(false), 2), isConnected = _React_useState[0], setIsConnected = _React_useState[1];
-    var ws = React.useRef(null);
-    var reconnectAttempts = React.useRef(0);
-    var reconnectTimeout = React.useRef();
-    var _React_useState1 = _sliced_to_array(React.useState([]), 2), messages = _React_useState1[0], setMessages = _React_useState1[1];
-    console.log(wsEndpoint);
-    var connect = React.useCallback(function() {
+    var _ref = _sliced_to_array((0, import_react.useState)(false), 2), isConnected = _ref[0], setIsConnected = _ref[1];
+    var ws = (0, import_react.useRef)(null);
+    var reconnectAttempts = (0, import_react.useRef)(0);
+    var reconnectTimeout = (0, import_react.useRef)();
+    var _ref1 = _sliced_to_array((0, import_react.useState)([]), 2), messages = _ref1[0], setMessages = _ref1[1];
+    var connect = (0, import_react.useCallback)(function() {
+        if (ws.current) {
+            ws.current.close();
+            ws.current = null;
+        }
         try {
             ws.current = new WebSocket(wsEndpoint);
             ws.current.onopen = function() {
@@ -333,10 +336,10 @@ var ChatProvider = function(param) {
             if (options.debug) console.error("WebSocket connection error:", error);
         }
     }, [
-        wsEndpoint
+        wsEndpoint,
+        options
     ]);
-    console.log("messages", channelName);
-    React.useEffect(function() {
+    (0, import_react.useEffect)(function() {
         connect();
         return function() {
             if (reconnectTimeout.current) {
@@ -347,8 +350,11 @@ var ChatProvider = function(param) {
                 ws.current = null;
             }
         };
-    }, []);
-    var value = React.useMemo(function() {
+    }, [
+        channelName,
+        connect
+    ]);
+    var value = (0, import_react.useMemo)(function() {
         return {
             organizationToken: organizationToken,
             channelName: channelName,
@@ -361,9 +367,12 @@ var ChatProvider = function(param) {
         };
     }, [
         organizationToken,
+        channelName,
         wsEndpoint,
         isConnected,
-        messages
+        messages,
+        userId,
+        userName
     ]);
     return /* @__PURE__ */ React.createElement(ChatContext.Provider, {
         value: value

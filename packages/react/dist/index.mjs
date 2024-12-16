@@ -1,6 +1,6 @@
 // src/context/ChatContext/index.tsx
 import * as React from "react";
-import { useMemo as useMemo2 } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // src/config.ts
 var config = {
@@ -22,14 +22,17 @@ var ChatProvider = ({
     debug: false
   }
 }) => {
-  const wsEndpoint = useMemo2(() => `${config.rust_ws_url}/chat/${channelName}`, [channelName]);
-  const [isConnected, setIsConnected] = React.useState(false);
-  const ws = React.useRef(null);
-  const reconnectAttempts = React.useRef(0);
-  const reconnectTimeout = React.useRef();
-  const [messages, setMessages] = React.useState([]);
-  console.log(wsEndpoint);
-  const connect = React.useCallback(() => {
+  const wsEndpoint = useMemo(() => `${config.rust_ws_url}/chat/${channelName}`, [channelName]);
+  const [isConnected, setIsConnected] = useState(false);
+  const ws = useRef(null);
+  const reconnectAttempts = useRef(0);
+  const reconnectTimeout = useRef();
+  const [messages, setMessages] = useState([]);
+  const connect = useCallback(() => {
+    if (ws.current) {
+      ws.current.close();
+      ws.current = null;
+    }
     try {
       ws.current = new WebSocket(wsEndpoint);
       ws.current.onopen = () => {
@@ -70,9 +73,8 @@ var ChatProvider = ({
       if (options.debug)
         console.error("WebSocket connection error:", error);
     }
-  }, [wsEndpoint]);
-  console.log("messages", channelName);
-  React.useEffect(() => {
+  }, [wsEndpoint, options]);
+  useEffect(() => {
     connect();
     return () => {
       if (reconnectTimeout.current) {
@@ -83,8 +85,8 @@ var ChatProvider = ({
         ws.current = null;
       }
     };
-  }, []);
-  const value = React.useMemo(() => ({
+  }, [channelName, connect]);
+  const value = useMemo(() => ({
     organizationToken,
     channelName,
     wsEndpoint,
@@ -93,7 +95,7 @@ var ChatProvider = ({
     ws: ws.current,
     currentUserId: userId,
     currentUserName: userName
-  }), [organizationToken, wsEndpoint, isConnected, messages]);
+  }), [organizationToken, channelName, wsEndpoint, isConnected, messages, userId, userName]);
   return /* @__PURE__ */ React.createElement(ChatContext.Provider, { value }, children);
 };
 var useChat = () => {
