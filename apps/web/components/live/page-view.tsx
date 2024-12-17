@@ -9,7 +9,7 @@ import { Modal } from "@/components/ui/modal";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { createParticipant } from "@/app/live/services";
+import { createParticipant } from "@/app/(live)/live/services";
 
 function generateRandomUsername(): string {
   const animals = [

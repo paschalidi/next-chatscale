@@ -1,6 +1,6 @@
 'use server'
 import { apiRequest } from "@/lib/apiRequest";
-import { TParticipantsResponse } from "@/app/live/services.types";
+import { TParticipantsResponse } from "@/app/(live)/live/services.types";
 
 
 export const createParticipant = async ({ name }: { name: string }) => {
