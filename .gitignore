@@ -12,6 +12,7 @@
 
 # next.js
 /**/.next/
+/**/.vercel_build_output/
 /out/
 
 # production

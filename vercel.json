@@ -3,7 +3,7 @@
   "installCommand": "pnpm install",
   "buildCommand": "pnpm build",
   "framework": "nextjs",
-  "outputDirectory": "apps/web/",
+  "outputDirectory": "apps/web/.vercel_build_output",
   "builds": [
     {
       "src": "apps/web/package.json",
