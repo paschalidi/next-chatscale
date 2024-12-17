@@ -1,6 +1,6 @@
 {
   "name": "chatscale",
-  "description": "mono",
+  "description": "chatscale",
   "private": true,
   "scripts": {
     "start": "pnpm --filter @chatscale/web start",
