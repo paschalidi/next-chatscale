@@ -1,45 +1,173 @@
 // src/context/ChatContext/index.tsx
 import * as React from "react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo } from "react";
+
+// src/context/ChatContext/useChannels.ts
+import { useEffect, useState } from "react";
+
+// src/lib/logError.ts
+var logError = (error, additionalContext = {}) => {
+  let message;
+  let stack;
+  if (error instanceof Error) {
+    message = error.message;
+    stack = error.stack;
+  } else {
+    message = String(error);
+    stack = void 0;
+  }
+  const errorLog = {
+    message,
+    stack,
+    timestamp: (/* @__PURE__ */ new Date()).toISOString(),
+    ...additionalContext
+  };
+  console.error(errorLog);
+};
 
 // src/config.ts
 var config = {
-  rust_api_url: "https://api.chatscale.cloud/api",
+  rust_api_url: "https://api.chatscale.cloud",
   rust_ws_url: "wss://api.chatscale.cloud/ws"
 };
 
-// src/context/ChatContext/index.tsx
-var ChatContext = React.createContext(null);
-var ChatProvider = ({
-  children,
-  organizationToken,
-  channelName,
-  userId,
-  userName,
-  options = {
-    reconnectInterval: 3e3,
-    maxReconnectAttempts: 5,
-    debug: false
+// src/lib/apiRequest.ts
+async function apiRequest(path, fetchOptions = {}, serverOptions = {}) {
+  const defaultHeaders = {
+    "Content-Type": "application/json"
+  };
+  const { serverUrl = config.rust_api_url } = serverOptions;
+  const url = `${serverUrl}${path}`;
+  try {
+    const response = await fetch(url, {
+      ...fetchOptions,
+      headers: {
+        ...defaultHeaders,
+        ...fetchOptions.headers
+      }
+    });
+    const contentType = response.headers.get("content-type");
+    if (!response.ok) {
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error(
+          `${url} <- Error ${response.status}: Invalid content-type. Expected application/json, got ${JSON.stringify(response.body)}`
+        );
+      }
+      const errorData = await response.json();
+      throw new Error(
+        `${url} <- Error ${response.status}: ${JSON.stringify(
+          errorData,
+          null,
+          2
+        )} `
+      );
+    }
+    if (response.status === 204) {
+      return { status: "204" };
+    }
+    return await response.json();
+  } catch (error) {
+    if (error instanceof Error) {
+      logErrorMetadata(error, url);
+    } else {
+      logError(error, { context: "Unexpected Error", url });
+    }
+    throw error;
   }
-}) => {
-  const wsEndpoint = useMemo(() => `${config.rust_ws_url}/chat/${channelName}`, [channelName]);
-  const [isConnected, setIsConnected] = useState(false);
+}
+var logErrorMetadata = (error, url) => {
+  if (error.name === "AbortError") {
+    logError(`Timeout \u2013 ${error.name} ${error}`, {
+      context: "Timeout Error",
+      url
+    });
+  } else {
+    logError(`${error.name} ${error}`, { context: "Fetch Error", url });
+  }
+};
+
+// src/services/index.ts
+var fetchChannels = async () => {
+  return await apiRequest(
+    "/api/channels",
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json"
+      }
+    }
+  );
+};
+var postMessage = async (message) => {
+  return await apiRequest(
+    "/api/messages",
+    {
+      method: "POST",
+      body: JSON.stringify(message)
+    }
+  );
+};
+var fetchMessagesByChannelId = async ({ channelId }) => {
+  return await apiRequest(
+    `/api/messages/${channelId}`,
+    {
+      method: "GET",
+      headers: {
+        Accept: "application/json"
+      }
+    }
+  );
+};
+
+// src/context/ChatContext/useChannels.ts
+var useChannels = ({ channelName }) => {
+  const [data, setData] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const fetchData = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetchChannels();
+      setData(response);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error("Failed to fetch channels"));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
+  return {
+    currentChannelId: data?.find((channel) => channelName === channel.name)?.id,
+    channels: data,
+    isChannelsLoading: isLoading,
+    channelsError: error,
+    refetchChannels: fetchData
+  };
+};
+
+// src/context/ChatContext/useWebsocket.ts
+import { useCallback, useEffect as useEffect2, useRef, useState as useState2 } from "react";
+function useWebSocket(channelName, options = {}) {
+  const [isConnected, setIsConnected] = useState2(false);
+  const [messages, setMessages] = useState2([]);
   const ws = useRef(null);
   const reconnectAttempts = useRef(0);
   const reconnectTimeout = useRef();
-  const [messages, setMessages] = useState([]);
   const connect = useCallback(() => {
     if (ws.current) {
       ws.current.close();
       ws.current = null;
     }
     try {
-      ws.current = new WebSocket(wsEndpoint);
+      ws.current = new WebSocket(`${config.rust_ws_url}/chat/${channelName}`);
       ws.current.onopen = () => {
         setIsConnected(true);
         reconnectAttempts.current = 0;
         if (options.debug) {
-          console.log("Connected to WebSocket");
+          console.log("Connected to WebSocket!");
         }
       };
       ws.current.onmessage = (event) => {
@@ -48,12 +176,9 @@ var ChatProvider = ({
           console.log("Received message:", data);
         }
         setMessages((prev) => [...prev, {
-          id: crypto.randomUUID(),
-          user_id: data.user_id,
-          username: data.username,
-          room_id: data.room_id,
-          content: data.content,
-          timestamp: Date.now()
+          participant_id: data.participant_id,
+          channel_name: data.channel_name,
+          content: data.content
         }]);
       };
       ws.current.onclose = () => {
@@ -61,20 +186,17 @@ var ChatProvider = ({
         if (reconnectAttempts.current < (options.maxReconnectAttempts || 5)) {
           reconnectTimeout.current = window.setTimeout(connect, options.reconnectInterval);
           reconnectAttempts.current += 1;
-          if (options.debug)
-            console.log(`Reconnect attempt ${reconnectAttempts.current}`);
         }
       };
       ws.current.onerror = (error) => {
-        if (options.debug)
-          console.error("WebSocket error:", error);
+        console.error("WebSocket error:", error);
       };
     } catch (error) {
       if (options.debug)
-        console.error("WebSocket connection error:", error);
+        console.error("WebSocket error:", error);
     }
-  }, [wsEndpoint, options]);
-  useEffect(() => {
+  }, [channelName, options]);
+  useEffect2(() => {
     connect();
     return () => {
       if (reconnectTimeout.current) {
@@ -82,20 +204,108 @@ var ChatProvider = ({
       }
       if (ws.current) {
         ws.current.close();
-        ws.current = null;
       }
     };
   }, [channelName, connect]);
+  return { isConnected, messages, ws: ws.current };
+}
+
+// src/context/ChatContext/useChannelMessage.ts
+import { useCallback as useCallback2, useEffect as useEffect3, useState as useState3 } from "react";
+function useChannelMessages(channelId) {
+  const [messages, setMessages] = useState3([]);
+  const [isLoading, setIsLoading] = useState3(false);
+  const [error, setError] = useState3(null);
+  const fetchMessages = useCallback2(async () => {
+    if (!channelId)
+      return;
+    setIsLoading(true);
+    try {
+      const data = await fetchMessagesByChannelId({ channelId });
+      setMessages(data);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error("Failed to fetch messages"));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [channelId]);
+  useEffect3(() => {
+    fetchMessages();
+  }, [channelId, fetchMessages]);
+  return { messages, areMessagesLoading: isLoading, messagesError: error, refetchMessages: fetchMessages };
+}
+
+// src/context/ChatContext/index.tsx
+var ChatContext = React.createContext(null);
+var ChatProvider = ({
+  children,
+  organizationToken,
+  channelName,
+  userId,
+  userName = "Unknown user",
+  options = {
+    reconnectInterval: 3e3,
+    maxReconnectAttempts: 5,
+    debug: false
+  }
+}) => {
+  const { isConnected, messages: wsMessages, ws } = useWebSocket(channelName, options);
+  const {
+    channels,
+    isChannelsLoading,
+    channelsError,
+    refetchChannels,
+    currentChannelId
+  } = useChannels({ channelName });
+  const {
+    messages: channelMessages,
+    areMessagesLoading,
+    refetchMessages,
+    messagesError
+  } = useChannelMessages(currentChannelId);
   const value = useMemo(() => ({
     organizationToken,
+    currentUser: {
+      id: userId,
+      userName,
+      isConnected
+    },
+    activeChannel: {
+      name: channelName,
+      id: currentChannelId
+    },
+    channels: {
+      data: channels,
+      isLoading: isChannelsLoading,
+      error: channelsError,
+      refetch: refetchChannels
+    },
+    messages: {
+      data: [...channelMessages || [], ...wsMessages || []],
+      isLoading: areMessagesLoading,
+      error: messagesError,
+      refetch: refetchMessages
+    },
+    wsEndpoint: `${config.rust_ws_url}/chat/${channelName}`,
+    ws
+  }), [
+    organizationToken,
     channelName,
-    wsEndpoint,
+    currentChannelId,
     isConnected,
-    messages,
-    ws: ws.current,
-    currentUserId: userId,
-    currentUserName: userName
-  }), [organizationToken, channelName, wsEndpoint, isConnected, messages, userId, userName]);
+    channelMessages,
+    wsMessages,
+    areMessagesLoading,
+    messagesError,
+    refetchMessages,
+    ws,
+    userId,
+    userName,
+    channels,
+    isChannelsLoading,
+    channelsError,
+    refetchChannels
+  ]);
   return /* @__PURE__ */ React.createElement(ChatContext.Provider, { value }, children);
 };
 var useChat = () => {
@@ -106,45 +316,26 @@ var useChat = () => {
   return context;
 };
 
-// src/components/ChatList/index.tsx
+// src/components/ChannelList/index.tsx
 import * as React2 from "react";
-var ChatList = ({
+var ChannelList = ({
   limit = 50,
   onChatSelect,
   customStyles = {},
   renderItem
 }) => {
-  const { organizationToken, channelName } = useChat();
-  const [chats, setChats] = React2.useState([
-    {
-      id: "public",
-      name: "public",
-      updatedAt: (/* @__PURE__ */ new Date()).toISOString()
-    }
-  ]);
-  const [isLoading, setIsLoading] = React2.useState(true);
-  React2.useEffect(() => {
-    const fetchChats = async () => {
-      try {
-      } catch (error) {
-        console.error("Error fetching chats:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchChats();
-  }, [organizationToken, limit]);
-  if (isLoading) {
+  const { channels } = useChat();
+  if (channels.isLoading) {
     return /* @__PURE__ */ React2.createElement("div", null, "Loading chats...");
   }
-  return /* @__PURE__ */ React2.createElement("div", { className: customStyles.container }, chats.map((chat) => /* @__PURE__ */ React2.createElement(
+  return /* @__PURE__ */ React2.createElement("div", { className: customStyles.container }, channels.data?.map((channel) => /* @__PURE__ */ React2.createElement(
     "div",
     {
-      key: chat.id,
-      onClick: () => onChatSelect?.(chat.id),
+      key: channel.id,
+      onClick: () => onChatSelect?.(channel),
       className: customStyles.chatItem
     },
-    renderItem ? renderItem(chat) : /* @__PURE__ */ React2.createElement("div", null, /* @__PURE__ */ React2.createElement("h3", null, chat.name), chat.lastMessage && /* @__PURE__ */ React2.createElement("p", null, chat.lastMessage))
+    renderItem ? renderItem(channel) : /* @__PURE__ */ React2.createElement("div", null, /* @__PURE__ */ React2.createElement("h3", null, channel.name))
   )));
 };
 
@@ -157,19 +348,34 @@ var MessageInput = ({
   disabled = false
 }) => {
   const [message, setMessage] = React3.useState("");
-  const { ws, isConnected, channelName, currentUserId, currentUserName } = useChat();
-  const handleSubmit = (e) => {
+  const {
+    ws,
+    currentUser: {
+      id: currentUserId,
+      userName: currentUserName,
+      isConnected
+    },
+    activeChannel: {
+      id: channelId,
+      name: channelName
+    }
+  } = useChat();
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (message.trim() && ws && isConnected) {
-      ws.send(JSON.stringify({
-        "user_id": currentUserId,
-        "room_id": channelName,
-        "content": message,
-        "username": currentUserName,
-        "timestamp": 0
-      }));
+      const data = {
+        channel_name: channelName,
+        participant_id: currentUserId,
+        content: message
+      };
+      ws.send(JSON.stringify(data));
       onSend?.(message);
       setMessage("");
+      try {
+        await postMessage(data);
+      } catch (e2) {
+        console.error(e2);
+      }
     }
   };
   return /* @__PURE__ */ React3.createElement("form", { onSubmit: handleSubmit, className: "flex gap-2" }, /* @__PURE__ */ React3.createElement(
@@ -196,6 +402,7 @@ var MessageInput = ({
 
 // src/components/Messages/index.tsx
 import * as React4 from "react";
+import { useEffect as useEffect5 } from "react";
 
 // ../../node_modules/.pnpm/clsx@2.1.1/node_modules/clsx/dist/clsx.mjs
 function r(e) {
@@ -225,8 +432,16 @@ var Messages = ({
   messageClassName = "",
   renderMessage
 }) => {
-  const { messages, currentUserId } = useChat();
+  const {
+    messages: { data: messages, refetch },
+    currentUser: {
+      id: currentUserId
+    }
+  } = useChat();
   const messagesEndRef = React4.useRef(null);
+  useEffect5(() => {
+    refetch();
+  }, []);
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -237,30 +452,30 @@ var Messages = ({
     return /* @__PURE__ */ React4.createElement(
       "div",
       {
-        key: message.timestamp,
+        key: message.participant_id.toString() + message.content,
         className: clsx(
           messageClassName,
           "flex flex-col max-w-[70%]",
-          message.user_id === currentUserId ? "ml-auto items-end" : "items-start"
+          message.participant_id === currentUserId ? "ml-auto items-end" : "items-start"
         )
       },
-      /* @__PURE__ */ React4.createElement("span", { className: "text-xs text-muted-foreground" }, message.user_id === currentUserId ? "" : message.username ?? "Some user"),
+      /* @__PURE__ */ React4.createElement("span", { className: "text-xs text-muted-foreground" }, message.participant_id === currentUserId ? "" : message.participant_id ?? "Some user"),
       /* @__PURE__ */ React4.createElement(
         "div",
         {
           className: clsx(
             "rounded-lg px-1 max-w-[90%]",
-            message.user_id === currentUserId ? "bg-blue-500 text-white self-end" : "bg-neutral-200 text-neutral-800 self-start"
+            message.participant_id === currentUserId ? "bg-blue-500 text-white self-end" : "bg-neutral-200 text-neutral-800 self-start"
           )
         },
         /* @__PURE__ */ React4.createElement("p", null, message.content)
       )
     );
   };
-  return /* @__PURE__ */ React4.createElement("div", { className: `flex flex-col h-full ${className}` }, /* @__PURE__ */ React4.createElement("div", { className: `flex-1 overflow-y-auto p-4 space-y-4 ${containerClassName}` }, messages.map((message, index) => /* @__PURE__ */ React4.createElement("div", { key: index, className: "max-w-[70%]" }, renderMessage ? renderMessage(message) : defaultRenderMessage(message))), /* @__PURE__ */ React4.createElement("div", { ref: messagesEndRef })));
+  return /* @__PURE__ */ React4.createElement("div", { className: `flex flex-col h-full ${className}` }, /* @__PURE__ */ React4.createElement("div", { className: `flex-1 overflow-y-auto p-4 space-y-4 ${containerClassName}` }, messages?.map((message, index) => /* @__PURE__ */ React4.createElement("div", { key: index, className: "max-w-[70%]" }, renderMessage ? renderMessage(message) : defaultRenderMessage(message))), /* @__PURE__ */ React4.createElement("div", { ref: messagesEndRef })));
 };
 export {
-  ChatList,
+  ChannelList,
   ChatProvider,
   MessageInput,
   Messages,

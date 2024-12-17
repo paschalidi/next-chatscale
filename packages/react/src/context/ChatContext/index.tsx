@@ -1,19 +1,48 @@
 import * as React from 'react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { ChatProviderProps } from "./types";
+import { useMemo } from 'react';
+import { useChannels } from "./useChannels";
+import { useWebSocket } from "./useWebsocket";
+import { useChannelMessages } from "./useChannelMessage";
 import { config } from "../../config";
-import { Message } from "../../components/Messages/types";
+import { ChannelsResponseDto, MessageRequestDto, MessageResponseDto, CombinedMessagesDto } from "../../types";
+
+interface Resource<T> {
+  data: T | undefined;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => Promise<void>;
+}
 
 interface ChatContextType {
   organizationToken: string;
-  channelName: string;
-  isConnected: boolean;
-  currentUserId: string;
-  currentUserName?: string;
+  activeChannel: {
+    name: string;
+    id: string | undefined;
+  }
+  currentUser: {
+    id: string;
+    userName: string;
+    isConnected: boolean;
+  }
   wsEndpoint: string;
   ws: WebSocket | null;
-  messages: Message[];
+  messages: Resource<CombinedMessagesDto>;
+  channels: Resource<ChannelsResponseDto>;
 }
+
+interface ChatProviderProps {
+  children: React.ReactNode;
+  organizationToken: string;
+  channelName: string;
+  userId: string;
+  userName?: string;
+  options?: {
+    reconnectInterval?: number;
+    maxReconnectAttempts?: number;
+    debug?: boolean;
+  };
+}
+
 
 const ChatContext = React.createContext<ChatContextType | null>(null);
 
@@ -22,99 +51,72 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
                                                             organizationToken,
                                                             channelName,
                                                             userId,
-                                                            userName,
+                                                            userName = 'Unknown user',
                                                             options = {
                                                               reconnectInterval: 3000,
                                                               maxReconnectAttempts: 5,
                                                               debug: false
                                                             }
                                                           }) => {
-  const wsEndpoint = useMemo(() => `${config.rust_ws_url}/chat/${channelName}`, [channelName]);
-  const [isConnected, setIsConnected] = useState(false);
-  const ws = useRef<WebSocket | null>(null);
-  const reconnectAttempts = useRef(0);
-  const reconnectTimeout = useRef<number>();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { isConnected, messages: wsMessages, ws } = useWebSocket(channelName, options);
+  const {
+    channels,
+    isChannelsLoading,
+    channelsError,
+    refetchChannels,
+    currentChannelId
+  } = useChannels({ channelName });
+  const {
+    messages: channelMessages,
+    areMessagesLoading,
+    refetchMessages,
+    messagesError
+  } = useChannelMessages(currentChannelId);
 
-  const connect = useCallback(() => {
-    // Close existing connection if it exists
-    if (ws.current) {
-      ws.current.close();
-      ws.current = null;
-    }
+  const value = useMemo<ChatContextType>(() => ({
+    organizationToken,
+    currentUser: {
+      id: userId,
+      userName: userName,
+      isConnected,
 
-    try {
-      ws.current = new WebSocket(wsEndpoint);
-
-      ws.current.onopen = () => {
-        setIsConnected(true);
-        reconnectAttempts.current = 0;
-        if (options.debug) {
-          console.log('Connected to WebSocket');
-        }
-      };
-
-      ws.current.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-
-        if (options.debug) {
-          console.log('Received message:', data);
-        }
-
-        // Add new message to state
-        setMessages(prev => [...prev, {
-          id: crypto.randomUUID(),
-          user_id: data.user_id,
-          username: data.username,
-          room_id: data.room_id,
-          content: data.content,
-          timestamp: Date.now()
-        }]);
-      };
-
-      ws.current.onclose = () => {
-        setIsConnected(false);
-        if (reconnectAttempts.current < (options.maxReconnectAttempts || 5)) {
-          reconnectTimeout.current = window.setTimeout(connect, options.reconnectInterval);
-          reconnectAttempts.current += 1;
-          if (options.debug) console.log(`Reconnect attempt ${reconnectAttempts.current}`);
-        }
-      };
-
-      ws.current.onerror = (error) => {
-        if (options.debug) console.error('WebSocket error:', error);
-      };
-
-    } catch (error) {
-      if (options.debug) console.error('WebSocket connection error:', error);
-    }
-  }, [wsEndpoint, options]);
-
-  useEffect(() => {
-    // Reconnect when channelName changes
-    connect();
-
-    return () => {
-      if (reconnectTimeout.current) {
-        window.clearTimeout(reconnectTimeout.current);
-      }
-      if (ws.current) {
-        ws.current.close();
-        ws.current = null;
-      }
-    };
-  }, [channelName, connect]); // Add channelName and connect to dependency array
-
-  const value = useMemo(() => ({
+    },
+    activeChannel: {
+      name: channelName,
+      id: currentChannelId
+    },
+    channels: {
+      data: channels,
+      isLoading: isChannelsLoading,
+      error: channelsError,
+      refetch: refetchChannels
+    },
+    messages: {
+      data: [...(channelMessages || []), ...(wsMessages || [])],
+      isLoading: areMessagesLoading,
+      error: messagesError,
+      refetch: refetchMessages
+    },
+    wsEndpoint: `${config.rust_ws_url}/chat/${channelName}`,
+    ws,
+  }), [
     organizationToken,
     channelName,
-    wsEndpoint,
+    currentChannelId,
     isConnected,
-    messages,
-    ws: ws.current,
-    currentUserId: userId,
-    currentUserName: userName
-  }), [organizationToken, channelName, wsEndpoint, isConnected, messages, userId, userName]);
+    channelMessages,
+    wsMessages,
+    areMessagesLoading,
+    messagesError,
+    refetchMessages,
+    ws,
+    userId,
+    userName,
+    channels,
+    isChannelsLoading,
+    channelsError,
+    refetchChannels
+  ]);
 
   return (
     <ChatContext.Provider value={value}>

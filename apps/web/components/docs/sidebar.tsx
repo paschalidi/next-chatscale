@@ -16,7 +16,7 @@ const sections = [
     title: "Components",
     items: [
       { title: "ChatProvider", href: "/docs#chat-provider" },
-      { title: "ChatList", href: "/docs#chat-list" },
+      { title: "ChannelList", href: "/docs#chat-list" },
       { title: "MessageInput", href: "/docs#message-input" },
     ],
   },

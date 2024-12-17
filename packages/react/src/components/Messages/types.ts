@@ -1,14 +1,9 @@
-export interface Message {
-  user_id: string;
-  username?: string;
-  room_id: string;
-  content: string;
-  timestamp: number;
-}
+import { MessageRequestDto } from "../../types";
+import { ReactNode } from "react";
 
 export interface MessagesProps {
   className?: string;
   containerClassName?: string;
   messageClassName?: string;
-  renderMessage?: (message: Message) => React.ReactNode;
+  renderMessage?: (message: MessageRequestDto) => ReactNode;
 }

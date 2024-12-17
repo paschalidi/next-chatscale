@@ -1,6 +1,8 @@
 import * as React from 'react';
 import { MessageInputProps } from './types';
 import { useChat } from '../../context/ChatContext';
+import { postMessage } from "../../services";
+import { MessageRequestDto } from "../../types";
 
 export const MessageInput: React.FC<MessageInputProps> = ({
                                                             placeholder = 'Type a message...',
@@ -10,20 +12,38 @@ export const MessageInput: React.FC<MessageInputProps> = ({
 
                                                           }) => {
   const [message, setMessage] = React.useState('');
-  const { ws, isConnected, channelName, currentUserId, currentUserName } = useChat();
+  const {
+    ws,
+    currentUser: {
+      id: currentUserId,
+      userName: currentUserName,
+      isConnected
+    },
+    activeChannel: {
+      id: channelId,
+      name: channelName
+    },
+  } = useChat();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim() && ws && isConnected) {
-      ws.send(JSON.stringify({
-        "user_id": currentUserId,
-        "room_id": channelName,
-        "content": message,
-        "username": currentUserName,
-        "timestamp": 0
-      }));
+      const data = {
+        channel_name: channelName,
+        participant_id: currentUserId,
+        content: message,
+      } as MessageRequestDto
+
+      ws.send(JSON.stringify(data));
+
       onSend?.(message);
       setMessage('');
+
+      try {
+        await postMessage(data);
+      } catch (e) {
+        console.error(e);
+      }
     }
   };
 

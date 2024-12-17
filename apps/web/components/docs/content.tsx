@@ -30,12 +30,12 @@ Thank you for your help!`
 const codeExamples = {
   installation: `npm install @chatscale/react`,
 
-  quickStart: `import { ChatProvider, ChatList, MessageInput } from '@chatscale/react'
+  quickStart: `import { ChatProvider, ChannelList, MessageInput } from '@chatscale/react'
 
 function App() {
   return (
     <ChatProvider organizationToken="your_token">
-      <ChatList />
+      <ChannelList />
       <MessageInput />
     </ChatProvider>
   )
@@ -54,9 +54,9 @@ function App() {
   {/* Your chat components */}
 </ChatProvider>`,
 
-  chatList: `import { ChatList } from '@chatscale/react'
+  channelList: `import { ChannelList } from '@chatscale/react'
 
-<ChatList 
+<ChannelList 
   limit={50}
   onChatSelect={(chatId) => console.log('Selected chat:', chatId)}
   customStyles={{
@@ -74,7 +74,7 @@ function App() {
   maxLength={1000}
 />`,
 
-  customComponents: `<ChatList
+  customComponents: `<ChannelList
   renderItem={(chat) => (
     <div className="custom-chat-item">
       <h3>{chat.title}</h3>
@@ -149,11 +149,11 @@ export function DocsContent() {
           filename="ChatProvider.jsx"
         />
 
-        <h2 id="chat-list">ChatList</h2>
+        <h2 id="chat-list">ChannelList</h2>
         <p>Displays the list of active chats for the current user.</p>
         <CodeBlock
-          code={codeExamples.chatList}
-          filename="ChatList.jsx"
+          code={codeExamples.channelList}
+          filename="ChannelList.jsx"
         />
 
         <div className="not-prose bg-muted p-4 rounded-lg my-6">

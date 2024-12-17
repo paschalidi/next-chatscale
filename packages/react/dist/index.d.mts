@@ -1,7 +1,47 @@
-import * as React$1 from 'react';
+import * as React from 'react';
+import { ReactNode } from 'react';
 
+type ChannelResponseDto = {
+    name: string;
+    id: string;
+};
+type ChannelsResponseDto = Array<ChannelResponseDto>;
+type CombinedMessagesDto = MessageResponseDto[] | MessageRequestDto[];
+type MessageResponseDto = MessageRequestDto & {
+    id: string;
+    timestamp: number;
+};
+type MessageRequestDto = {
+    participant_id: string;
+    channel_name: string;
+    content: string;
+};
+type MessagesResponseDto = Array<MessageResponseDto>;
+
+interface Resource<T> {
+    data: T | undefined;
+    isLoading: boolean;
+    error: Error | null;
+    refetch: () => Promise<void>;
+}
+interface ChatContextType {
+    organizationToken: string;
+    activeChannel: {
+        name: string;
+        id: string | undefined;
+    };
+    currentUser: {
+        id: string;
+        userName: string;
+        isConnected: boolean;
+    };
+    wsEndpoint: string;
+    ws: WebSocket | null;
+    messages: Resource<CombinedMessagesDto>;
+    channels: Resource<ChannelsResponseDto>;
+}
 interface ChatProviderProps {
-    children: React$1.ReactNode;
+    children: React.ReactNode;
     organizationToken: string;
     channelName: string;
     userId: string;
@@ -12,51 +52,20 @@ interface ChatProviderProps {
         debug?: boolean;
     };
 }
-
-interface Message {
-    user_id: string;
-    username?: string;
-    room_id: string;
-    content: string;
-    timestamp: number;
-}
-interface MessagesProps {
-    className?: string;
-    containerClassName?: string;
-    messageClassName?: string;
-    renderMessage?: (message: Message) => React.ReactNode;
-}
-
-interface ChatContextType {
-    organizationToken: string;
-    channelName: string;
-    isConnected: boolean;
-    currentUserId: string;
-    currentUserName?: string;
-    wsEndpoint: string;
-    ws: WebSocket | null;
-    messages: Message[];
-}
-declare const ChatProvider: React$1.FC<ChatProviderProps>;
+declare const ChatProvider: React.FC<ChatProviderProps>;
 declare const useChat: () => ChatContextType;
 
-interface Chat {
-    id: string;
-    name: string;
-    lastMessage?: string;
-    updatedAt: string;
-}
 interface ChatListProps {
     limit?: number;
-    onChatSelect?: (chatId: string) => void;
+    onChatSelect?: (channel: ChannelResponseDto) => void;
     customStyles?: {
         container?: string;
         chatItem?: string;
     };
-    renderItem?: (chat: Chat) => React.ReactNode;
+    renderItem?: (channel: ChannelResponseDto) => ReactNode;
 }
 
-declare const ChatList: React$1.FC<ChatListProps>;
+declare const ChannelList: React.FC<ChatListProps>;
 
 interface MessageInputProps {
     placeholder?: string;
@@ -66,8 +75,15 @@ interface MessageInputProps {
     disabled?: boolean;
 }
 
-declare const MessageInput: React$1.FC<MessageInputProps>;
+declare const MessageInput: React.FC<MessageInputProps>;
 
-declare const Messages: React$1.FC<MessagesProps>;
+interface MessagesProps {
+    className?: string;
+    containerClassName?: string;
+    messageClassName?: string;
+    renderMessage?: (message: MessageRequestDto) => ReactNode;
+}
 
-export { type Chat, ChatList, type ChatListProps, ChatProvider, type ChatProviderProps, type Message, MessageInput, type MessageInputProps, Messages, type MessagesProps, useChat };
+declare const Messages: React.FC<MessagesProps>;
+
+export { ChannelList, type ChannelResponseDto, type ChannelsResponseDto, type ChatListProps, ChatProvider, MessageInput, type MessageInputProps, type MessageResponseDto, Messages, type MessagesProps, type MessagesResponseDto, useChat };

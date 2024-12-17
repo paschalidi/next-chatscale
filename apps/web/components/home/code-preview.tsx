@@ -1,12 +1,12 @@
 import CodeBlock from "@/components/ui/code-block";
 
 export function CodePreview() {
-  const integrationCode = `import { ChatProvider, ChatList, MessageInput } from '@chatscale/react'
+  const integrationCode = `import { ChatProvider, ChannelList, MessageInput } from '@chatscale/react'
 
 function App() {
   return (
     <ChatProvider organizationToken="your_token">
-      <ChatList />
+      <ChannelList />
       <MessageInput />
     </ChatProvider>
   )
