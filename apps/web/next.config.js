@@ -5,7 +5,6 @@ const nextConfig = {
   ...(isStandalone && {output: 'standalone'}),
   transpilePackages: ['@chatscale/react'],
   reactStrictMode: true,
-  distDir: '.vercel_build_output',
   logging: {
     fetches: {
       fullUrl: true
