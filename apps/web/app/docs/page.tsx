@@ -1,6 +1,5 @@
 "use client";
 
-import { Header } from "@/components/layout/header";
 import { DocsSidebar } from "@/components/docs/sidebar";
 import { DocsContent } from "@/components/docs/content";
 
