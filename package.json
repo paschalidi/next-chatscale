@@ -1,5 +1,6 @@
 {
   "name": "chatscale",
+  "description": "mono",
   "private": true,
   "scripts": {
     "build": "pnpm -r build",
