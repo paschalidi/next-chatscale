@@ -24,7 +24,9 @@ export function HeroSection() {
             </Button>
           </Link>
           <Button size="lg" variant="outline">
-            View Documentation
+            <Link href={'/docs'}>
+              View Documentation
+            </Link>
           </Button>
         </div>
       </div>

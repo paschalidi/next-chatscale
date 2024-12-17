@@ -3,6 +3,7 @@
   "description": "mono",
   "private": true,
   "scripts": {
+    "start": "pnpm --filter @chatscale/web start",
     "build": "pnpm -r build",
     "dev": "pnpm --parallel -r dev",
     "lint": "pnpm -r lint"

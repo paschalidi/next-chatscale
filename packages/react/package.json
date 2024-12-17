@@ -18,12 +18,12 @@
     "react": "^18.0.0"
   },
   "devDependencies": {
-    "@types/react": "^18.0.0",
-    "typescript": "^5.0.0",
-    "tsup": "^7.0.0",
     "@swc/core": "^1.0.0",
+    "@types/react": "^18.0.0",
+    "clsx": "^2.1.1",
     "react": "^18.0.0",
-    "clsx": "^2.1.1"
+    "tsup": "^7.0.0",
+    "typescript": "^5.0.0"
   },
   "author": "Christos Paschalidis",
   "license": "ISC"

@@ -3,7 +3,7 @@
   "installCommand": "pnpm install",
   "buildCommand": "pnpm build",
   "framework": "nextjs",
-  "outputDirectory": "apps/web/.next",
+  "outputDirectory": "apps/web/",
   "builds": [
     {
       "src": "apps/web/package.json",
