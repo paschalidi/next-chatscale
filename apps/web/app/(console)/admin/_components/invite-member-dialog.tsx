@@ -36,7 +36,7 @@ export function InviteMemberDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Invite team member</DialogTitle>
+          <p>Invite team member</p>
           <DialogDescription>
             Send an invitation to join your organization.
           </DialogDescription>

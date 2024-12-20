@@ -81,7 +81,7 @@ export const PageView = () => {
             if (userName) {
               try {
                 setIsUserCreationLoading(true);
-                const { id, name } = await createParticipant({ name: userName });
+                const { data: { id, name } } = await createParticipant({ name: userName });
 
                 // Store in localStorage
                 localStorage.setItem('chatUserName', userName);
@@ -122,7 +122,7 @@ export const PageView = () => {
                 try {
                   const randomUsername = generateRandomUsername();
                   setIsUserCreationLoading(true);
-                  const { id } = await createParticipant({ name: randomUsername });
+                  const { data: { id } } = await createParticipant({ name: randomUsername });
                   localStorage.setItem('chatUserName', randomUsername);
                   localStorage.setItem('chatUserId', id);
                   setUserName(randomUsername);

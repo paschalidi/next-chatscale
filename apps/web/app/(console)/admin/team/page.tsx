@@ -21,51 +21,46 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Key, Copy, Trash2 } from "lucide-react";
-import { GenerateKeyDialog } from "@/app/(dashboard)/admin/_components/generate-key-dialog";
+import { UserPlus, Mail, Trash2 } from "lucide-react";
+import { InviteMemberDialog } from "@/app/(console)/admin/_components/invite-member-dialog";
 
-export default function APIKeys() {
-  const [keys, setKeys] = useState([
+export default function TeamManagement() {
+  const [members, setMembers] = useState([
     {
       id: 1,
-      name: "Production API Key",
-      key: "sk_live_123456789",
-      created: "2024-03-20",
-      lastUsed: "2024-03-25",
+      name: "John Doe",
+      email: "john@example.com",
+      role: "Admin",
+      joined: "2024-03-01",
     },
     {
       id: 2,
-      name: "Development API Key",
-      key: "sk_test_987654321",
-      created: "2024-03-15",
-      lastUsed: "2024-03-24",
+      name: "Jane Smith",
+      email: "jane@example.com",
+      role: "Developer",
+      joined: "2024-03-15",
     },
   ]);
 
-  const [generateDialogOpen, setGenerateDialogOpen] = useState(false);
+  const [inviteDialogOpen, setInviteDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [keyToDelete, setKeyToDelete] = useState<typeof keys[0] | null>(null);
-
-  const handleCopy = (key: string) => {
-    navigator.clipboard.writeText(key);
-    // TODO: Show toast notification
-  };
+  const [memberToDelete, setMemberToDelete] = useState<typeof members[0] | null>(null);
 
   const handleDelete = () => {
-    if (keyToDelete) {
-      setKeys(keys.filter((k) => k.id !== keyToDelete.id));
+    if (memberToDelete) {
+      setMembers(members.filter((m) => m.id !== memberToDelete.id));
       setDeleteDialogOpen(false);
-      setKeyToDelete(null);
+      setMemberToDelete(null);
     }
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">API Keys</h1>
-        <Button onClick={() => setGenerateDialogOpen(true)}>
-          <Key className="mr-2 h-4 w-4" />
-          Generate New Key
+        <h1 className="text-3xl font-bold">Team Management</h1>
+        <Button onClick={() => setInviteDialogOpen(true)}>
+          <UserPlus className="mr-2 h-4 w-4" />
+          Invite Team Member
         </Button>
       </div>
 
@@ -74,37 +69,29 @@ export default function APIKeys() {
           <TableHeader>
             <TableRow>
               <TableHead>Name</TableHead>
-              <TableHead>Key</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead>Last Used</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Role</TableHead>
+              <TableHead>Joined</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {keys.map((key) => (
-              <TableRow key={key.id}>
-                <TableCell className="font-medium">{key.name}</TableCell>
-                <TableCell>
-                  <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
-                    {key.key}
-                  </code>
-                </TableCell>
-                <TableCell>{key.created}</TableCell>
-                <TableCell>{key.lastUsed}</TableCell>
+            {members.map((member) => (
+              <TableRow key={member.id}>
+                <TableCell className="font-medium">{member.name}</TableCell>
+                <TableCell>{member.email}</TableCell>
+                <TableCell>{member.role}</TableCell>
+                <TableCell>{member.joined}</TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleCopy(key.key)}
-                  >
-                    <Copy className="h-4 w-4" />
+                  <Button variant="ghost" size="icon">
+                    <Mail className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
                     className="text-destructive"
                     onClick={() => {
-                      setKeyToDelete(key);
+                      setMemberToDelete(member);
                       setDeleteDialogOpen(true);
                     }}
                   >
@@ -117,18 +104,18 @@ export default function APIKeys() {
         </Table>
       </Card>
 
-      <GenerateKeyDialog
-        open={generateDialogOpen}
-        onOpenChange={setGenerateDialogOpen}
+      <InviteMemberDialog
+        open={inviteDialogOpen}
+        onOpenChange={setInviteDialogOpen}
       />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete API key</AlertDialogTitle>
+            <AlertDialogTitle>Remove team member</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this API key? Any applications using
-              this key will no longer be able to access the API.
+              Are you sure you want to remove {memberToDelete?.name} from the team?
+              This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -137,7 +124,7 @@ export default function APIKeys() {
               onClick={handleDelete}
               className="bg-destructive text-destructive-foreground"
             >
-              Delete key
+              Remove member
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

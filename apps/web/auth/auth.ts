@@ -1,17 +1,21 @@
-import NextAuth from "next-auth"
+import NextAuth, { Session, User } from "next-auth"
 import Credentials from "next-auth/providers/credentials"
 import { signInWithCredentials } from "@/auth/auth.services";
+import { JWT } from 'next-auth/jwt';
+import { UserSession } from "@/auth/types";
 
-interface LoginCredentials extends Record<string, unknown> {
-  email?: string;
-  password?: string;
+function isValidUserSession(
+  obj: Partial<UserSession> | undefined
+): obj is UserSession {
+  return (
+    typeof obj === 'object' &&
+    obj !== null &&
+    typeof obj.email === 'string' &&
+    typeof obj.id === 'string' &&
+    typeof obj.token === 'string'
+  );
 }
 
-interface User {
-  id: string
-  email: string
-  name?: string
-}
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
@@ -53,19 +57,39 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
+
+  callbacks: {
+    async jwt({ token: { token: userSession, ...rest }, user }: {
+      token: JWT;
+      user?: User | UserSession;
+    }): Promise<JWT> {
+      if (user) {
+        userSession = user as UserSession;
+      }
+      return { ...rest, token: userSession };
+    },
+    async session({
+                    session,
+                    token: { token: userSession }
+                  }: {
+      session: Session;
+      token: JWT & { token?: Partial<UserSession> };
+    }): Promise<Session & { accessToken: string }> {
+      if (session && isValidUserSession(userSession)) {
+        return {
+          user: {
+            email: userSession.email,
+            id: userSession.id,
+          },
+          accessToken: userSession.token,
+          expires: session.expires // Ensure we keep the expires property
+        };
+      }
+      return { ...session, accessToken: '' };
+    }
+  },
   pages: {
     signIn: '/auth/login',
   },
-  callbacks: {
-    async session({ session, token }) {
-      console.log('@@@', session)
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.sub // Add user id to session
-        }
-      }
-    }
-  }
+  secret: process.env.NEXTAUTH_SECRET!,
 })

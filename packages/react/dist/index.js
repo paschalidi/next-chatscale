@@ -538,7 +538,7 @@ var useChannels = function(param) {
     var _ref2 = _sliced_to_array((0, import_react.useState)(null), 2), error = _ref2[0], setError = _ref2[1];
     var fetchData = /*#__PURE__*/ function() {
         var _ref = _async_to_generator(function() {
-            var response, err;
+            var _ref, data2, err;
             return _ts_generator(this, function(_state) {
                 switch(_state.label){
                     case 0:
@@ -557,8 +557,8 @@ var useChannels = function(param) {
                             fetchChannels()
                         ];
                     case 2:
-                        response = _state.sent();
-                        setData(response);
+                        _ref = _state.sent(), data2 = _ref.data;
+                        setData(data2);
                         return [
                             3,
                             5
@@ -589,6 +589,7 @@ var useChannels = function(param) {
     (0, import_react.useEffect)(function() {
         fetchData();
     }, []);
+    console.log(data);
     return {
         currentChannelId: data === null || data === void 0 ? void 0 : (_data_find = data.find(function(channel) {
             return channelName === channel.name;
@@ -602,31 +603,18 @@ var useChannels = function(param) {
 // src/context/ChatContext/useWebsocket.ts
 var import_react2 = require("react");
 function useWebSocket(channelName) {
-    var options = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {};
     var _ref = _sliced_to_array((0, import_react2.useState)(false), 2), isConnected = _ref[0], setIsConnected = _ref[1];
     var _ref1 = _sliced_to_array((0, import_react2.useState)([]), 2), messages = _ref1[0], setMessages = _ref1[1];
     var ws = (0, import_react2.useRef)(null);
-    var reconnectAttempts = (0, import_react2.useRef)(0);
-    var reconnectTimeout = (0, import_react2.useRef)();
     var connect = (0, import_react2.useCallback)(function() {
-        if (ws.current) {
-            ws.current.close();
-            ws.current = null;
-        }
-        try {
+        if (!ws.current || ws.current.readyState === WebSocket.CLOSED) {
             ws.current = new WebSocket("".concat(config.rust_ws_url, "/chat/").concat(channelName));
             ws.current.onopen = function() {
                 setIsConnected(true);
-                reconnectAttempts.current = 0;
-                if (options.debug) {
-                    console.log("Connected to WebSocket!");
-                }
+                console.log("WebSocket connected");
             };
             ws.current.onmessage = function(event) {
                 var data = JSON.parse(event.data);
-                if (options.debug) {
-                    console.log("Received message:", data);
-                }
                 setMessages(function(prev) {
                     return _to_consumable_array(prev).concat([
                         {
@@ -639,33 +627,20 @@ function useWebSocket(channelName) {
             };
             ws.current.onclose = function() {
                 setIsConnected(false);
-                if (reconnectAttempts.current < (options.maxReconnectAttempts || 5)) {
-                    reconnectTimeout.current = window.setTimeout(connect, options.reconnectInterval);
-                    reconnectAttempts.current += 1;
-                }
+                console.log("WebSocket closed");
             };
-            ws.current.onerror = function(error) {
-                console.error("WebSocket error:", error);
-            };
-        } catch (error) {
-            if (options.debug) console.error("WebSocket error:", error);
         }
     }, [
-        channelName,
-        options
+        channelName
     ]);
     (0, import_react2.useEffect)(function() {
         connect();
         return function() {
-            if (reconnectTimeout.current) {
-                window.clearTimeout(reconnectTimeout.current);
-            }
-            if (ws.current) {
+            if (ws.current && ws.current.readyState === WebSocket.OPEN) {
                 ws.current.close();
             }
         };
     }, [
-        channelName,
         connect
     ]);
     return {
@@ -704,7 +679,7 @@ function useChannelMessages(channelId) {
                         })
                     ];
                 case 2:
-                    data = _state.sent();
+                    data = _state.sent().data;
                     setMessages(data);
                     return [
                         3,
@@ -752,7 +727,7 @@ var ChatProvider = function(param) {
         maxReconnectAttempts: 5,
         debug: false
     } : _param_options;
-    var _useWebSocket = useWebSocket(channelName, options), isConnected = _useWebSocket.isConnected, wsMessages = _useWebSocket.messages, ws = _useWebSocket.ws;
+    var _useWebSocket = useWebSocket(channelName), isConnected = _useWebSocket.isConnected, wsMessages = _useWebSocket.messages, ws = _useWebSocket.ws;
     var _useChannels = useChannels({
         channelName: channelName
     }), channels = _useChannels.channels, isChannelsLoading = _useChannels.isChannelsLoading, channelsError = _useChannels.channelsError, refetchChannels = _useChannels.refetchChannels, currentChannelId = _useChannels.currentChannelId;
@@ -917,7 +892,7 @@ var MessageInput = function(param) {
 // src/components/Messages/index.tsx
 var React4 = __toESM(require("react"));
 var import_react5 = require("react");
-// ../../node_modules/.pnpm/clsx@2.1.1/node_modules/clsx/dist/clsx.mjs
+// ../../node_modules/clsx/dist/clsx.mjs
 function r(e) {
     var t, f, n = "";
     if ("string" == typeof e || "number" == typeof e) n += e;

@@ -10,3 +10,9 @@ export type SignInRequest = {
   email: string;
   password: string;
 }
+
+export interface UserSession {
+  email: string;
+  id: string;
+  token: string;
+}

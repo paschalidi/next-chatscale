@@ -18,7 +18,6 @@ export const Messages: React.FC<MessagesProps> = ({
   } = useChat();
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
-
   useEffect(() => {
     refetch()
   }, []);

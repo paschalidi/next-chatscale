@@ -1,4 +1,4 @@
-import { Sidebar } from "@/app/(dashboard)/admin/_components/sidebar";
+import { Sidebar } from "@/app/(console)/admin/_components/sidebar";
 import { auth } from "@/auth/auth";
 import { redirect } from "next/navigation";
 
@@ -8,7 +8,7 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  if (!session) {
+  if (!session?.user.id) {
     return redirect("/");
   }
 

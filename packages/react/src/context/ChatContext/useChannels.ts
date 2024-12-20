@@ -20,8 +20,8 @@ export const useChannels = ({ channelName }: { channelName: string }): UseChanne
     setError(null);
 
     try {
-      const response = await fetchChannels();
-      setData(response);
+      const { data } = await fetchChannels();
+      setData(data);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to fetch channels'));
     } finally {
@@ -33,6 +33,7 @@ export const useChannels = ({ channelName }: { channelName: string }): UseChanne
     fetchData();
   }, []);
 
+  console.log(data)
   return {
     currentChannelId: data?.find(channel => channelName === channel.name)?.id,
     channels: data,

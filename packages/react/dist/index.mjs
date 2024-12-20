@@ -128,8 +128,8 @@ var useChannels = ({ channelName }) => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetchChannels();
-      setData(response);
+      const { data: data2 } = await fetchChannels();
+      setData(data2);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to fetch channels"));
     } finally {
@@ -139,6 +139,7 @@ var useChannels = ({ channelName }) => {
   useEffect(() => {
     fetchData();
   }, []);
+  console.log(data);
   return {
     currentChannelId: data?.find((channel) => channelName === channel.name)?.id,
     channels: data,
@@ -150,31 +151,19 @@ var useChannels = ({ channelName }) => {
 
 // src/context/ChatContext/useWebsocket.ts
 import { useCallback, useEffect as useEffect2, useRef, useState as useState2 } from "react";
-function useWebSocket(channelName, options = {}) {
+function useWebSocket(channelName) {
   const [isConnected, setIsConnected] = useState2(false);
   const [messages, setMessages] = useState2([]);
   const ws = useRef(null);
-  const reconnectAttempts = useRef(0);
-  const reconnectTimeout = useRef();
   const connect = useCallback(() => {
-    if (ws.current) {
-      ws.current.close();
-      ws.current = null;
-    }
-    try {
+    if (!ws.current || ws.current.readyState === WebSocket.CLOSED) {
       ws.current = new WebSocket(`${config.rust_ws_url}/chat/${channelName}`);
       ws.current.onopen = () => {
         setIsConnected(true);
-        reconnectAttempts.current = 0;
-        if (options.debug) {
-          console.log("Connected to WebSocket!");
-        }
+        console.log("WebSocket connected");
       };
       ws.current.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if (options.debug) {
-          console.log("Received message:", data);
-        }
         setMessages((prev) => [...prev, {
           participant_id: data.participant_id,
           channel_name: data.channel_name,
@@ -183,30 +172,18 @@ function useWebSocket(channelName, options = {}) {
       };
       ws.current.onclose = () => {
         setIsConnected(false);
-        if (reconnectAttempts.current < (options.maxReconnectAttempts || 5)) {
-          reconnectTimeout.current = window.setTimeout(connect, options.reconnectInterval);
-          reconnectAttempts.current += 1;
-        }
+        console.log("WebSocket closed");
       };
-      ws.current.onerror = (error) => {
-        console.error("WebSocket error:", error);
-      };
-    } catch (error) {
-      if (options.debug)
-        console.error("WebSocket error:", error);
     }
-  }, [channelName, options]);
+  }, [channelName]);
   useEffect2(() => {
     connect();
     return () => {
-      if (reconnectTimeout.current) {
-        window.clearTimeout(reconnectTimeout.current);
-      }
-      if (ws.current) {
+      if (ws.current && ws.current.readyState === WebSocket.OPEN) {
         ws.current.close();
       }
     };
-  }, [channelName, connect]);
+  }, [connect]);
   return { isConnected, messages, ws: ws.current };
 }
 
@@ -221,7 +198,7 @@ function useChannelMessages(channelId) {
       return;
     setIsLoading(true);
     try {
-      const data = await fetchMessagesByChannelId({ channelId });
+      const { data } = await fetchMessagesByChannelId({ channelId });
       setMessages(data);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to fetch messages"));
@@ -249,7 +226,7 @@ var ChatProvider = ({
     debug: false
   }
 }) => {
-  const { isConnected, messages: wsMessages, ws } = useWebSocket(channelName, options);
+  const { isConnected, messages: wsMessages, ws } = useWebSocket(channelName);
   const {
     channels,
     isChannelsLoading,
@@ -404,7 +381,7 @@ var MessageInput = ({
 import * as React4 from "react";
 import { useEffect as useEffect5 } from "react";
 
-// ../../node_modules/.pnpm/clsx@2.1.1/node_modules/clsx/dist/clsx.mjs
+// ../../node_modules/clsx/dist/clsx.mjs
 function r(e) {
   var t, f, n = "";
   if ("string" == typeof e || "number" == typeof e)

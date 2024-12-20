@@ -58,7 +58,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
                                                               debug: false
                                                             }
                                                           }) => {
-  const { isConnected, messages: wsMessages, ws } = useWebSocket(channelName, options);
+  const { isConnected, messages: wsMessages, ws } = useWebSocket(channelName);
   const {
     channels,
     isChannelsLoading,

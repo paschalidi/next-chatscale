@@ -42,7 +42,7 @@ export function GenerateKeyDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Generate new API key</DialogTitle>
+          <p>Generate new API key</p>
           <DialogDescription>
             Create a new API key for your application.
           </DialogDescription>

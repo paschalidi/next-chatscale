@@ -13,7 +13,7 @@ export const signInWithCredentials = async ({
   password: string;
 }) => {
 
-  return apiRequest<SignInResponse>('/api/organization_accounts/sign_in', {
+  return apiRequest<{ data: SignInResponse, message:string }>('/api/organization_accounts/sign_in', {
     method: 'POST',
     body: JSON.stringify({
       email,
@@ -30,7 +30,7 @@ export const createOrganizationAccount = async ({
                                                   password,
                                                   email
                                                 }: CreateOrgFormValues) => {
-  return await apiRequest<CreateOrgResponse>(
+  return await apiRequest<{data: CreateOrgResponse, message:string }>(
     '/api/organization_accounts/create',
     {
       method: "POST",

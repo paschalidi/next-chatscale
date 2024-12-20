@@ -13,7 +13,7 @@ export function useChannelMessages(channelId?: string) {
 
     setIsLoading(true);
     try {
-      const data = await fetchMessagesByChannelId({ channelId });
+      const { data } = await fetchMessagesByChannelId({ channelId });
       setMessages(data);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to fetch messages'));

@@ -3,7 +3,7 @@ import { ChannelsResponseDto, MessageRequestDto, MessageResponseDto, MessagesRes
 
 
 export const fetchChannels = async () => {
-  return await apiRequest<ChannelsResponseDto>(
+  return await apiRequest<{ data: ChannelsResponseDto, message: string }>(
     '/api/channels',
     {
       method: "GET",
@@ -15,7 +15,7 @@ export const fetchChannels = async () => {
 }
 
 export const createNewChannel = async ({ name }: { name: string }) => {
-  return await apiRequest<ChannelsResponseDto>(
+  return await apiRequest<{ data: ChannelsResponseDto, message: string }>(
     '/api/channels',
     {
       method: "POST",
@@ -28,7 +28,7 @@ export const createNewChannel = async ({ name }: { name: string }) => {
 }
 
 export const postMessage = async (message: MessageRequestDto) => {
-  return await apiRequest<MessageResponseDto>(
+  return await apiRequest<{ data: MessageResponseDto, message: string }>(
     '/api/messages',
     {
       method: "POST",
@@ -38,7 +38,7 @@ export const postMessage = async (message: MessageRequestDto) => {
 }
 
 export const fetchMessagesByChannelId = async ({ channelId }: { channelId: string }) => {
-  return await apiRequest<MessagesResponseDto>(
+  return await apiRequest<{ data: MessagesResponseDto, message: string }>(
     `/api/messages/${channelId}`,
     {
       method: "GET",
