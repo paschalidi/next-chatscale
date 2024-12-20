@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { BarChart, Key, LayoutDashboard, Settings, Users, } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signInWrapper, signOutWrapper } from "@/auth/auth.services";
-import { SignInFormValues } from "@/app/(root)/auth/login/_cargo/types";
+import { SignInFormValues } from "@/app/(auth)/auth/login/_cargo/types";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },

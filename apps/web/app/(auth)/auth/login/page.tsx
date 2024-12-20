@@ -1,5 +1,5 @@
 import { auth } from "@/auth/auth";
-import { SignupView } from "@/app/(root)/auth/signup/PageSignUpView";
+import { PageLoginView } from "@/app/(auth)/auth/login/PageLoginView";
 import { redirect } from "next/navigation";
 
 export default async function Page() {
@@ -8,5 +8,5 @@ export default async function Page() {
   if (user) {
     redirect('/admin')
   }
-  return <SignupView/>
+  return <PageLoginView/>
 }

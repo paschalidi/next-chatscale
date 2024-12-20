@@ -3,7 +3,7 @@
 import { apiRequest } from "@/lib/apiRequest";
 import { SignInResponse } from "@/auth/types";
 import { signIn, signOut } from "@/auth/auth";
-import { CreateOrgFormValues, CreateOrgResponse } from "@/app/(root)/auth/signup/_cargo/types";
+import { CreateOrgFormValues, CreateOrgResponse } from "@/app/(auth)/auth/signup/_cargo/types";
 
 export const signInWithCredentials = async ({
                                               email,

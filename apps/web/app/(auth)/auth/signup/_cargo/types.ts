@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { createOrgSchema } from "@/app/(root)/auth/signup/_cargo/schema";
+import { createOrgSchema } from "@/app/(auth)/auth/signup/_cargo/schema";
 
 export type CreateOrgFormValues = yup.InferType<typeof createOrgSchema>
 export type CreateOrgResponse = {

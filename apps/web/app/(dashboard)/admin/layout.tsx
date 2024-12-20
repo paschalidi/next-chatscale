@@ -1,13 +1,17 @@
-"use client";
-
-
 import { Sidebar } from "@/app/(dashboard)/admin/_components/sidebar";
+import { auth } from "@/auth/auth";
+import { redirect } from "next/navigation";
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+  if (!session) {
+    return redirect("/");
+  }
+
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />

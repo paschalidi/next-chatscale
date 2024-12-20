@@ -1,5 +1,3 @@
-"use client";
-
 import { Card } from "@/components/ui/card";
 import { 
   Users, 
@@ -7,8 +5,11 @@ import {
   Key, 
   Activity 
 } from "lucide-react";
+import { auth } from "@/auth/auth";
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  const session = await auth();
+  console.log(session)
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Dashboard</h1>

@@ -22,7 +22,7 @@ export function Header() {
             Documentation
           </Link>
           <Button variant="outline">
-            <Link href={'/auth/login'}>
+            <Link href={'/apps/web/app/(auth)/auth/login'}>
               Login
             </Link>
           </Button>

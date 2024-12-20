@@ -7,9 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createOrgSchema } from "@/app/(root)/auth/signup/_cargo/schema";
-import { CreateOrgFormValues } from "@/app/(root)/auth/signup/_cargo/types";
-import { useMutateCreateAccountOrg } from "@/app/(root)/auth/signup/_cargo/actions";
+import { createOrgSchema } from "@/app/(auth)/auth/signup/_cargo/schema";
+import { CreateOrgFormValues } from "@/app/(auth)/auth/signup/_cargo/types";
+import { useMutateCreateAccountOrg } from "@/app/(auth)/auth/signup/_cargo/actions";
 import Link from "next/link";
 
 
@@ -35,9 +35,13 @@ export const SignupView = () => {
   };
 
   return (
-    <div className="w-full max-w-xl">
-      <Card className="p-6">
-        <h1 className="text-1xl font-semibold mb-3">Create your account</h1>
+    <div className={'w-full max-w-xl mx-auto'}>
+      <div className="flex flex-col gap-8 w-full items-center">
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold">Welcome</h1>
+          <p className="text-gray-500">Create your organization to continue</p>
+        </div>
+        <Card className="p-6 w-full max-w-md">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="space-y-4">
@@ -106,8 +110,8 @@ export const SignupView = () => {
           </form>
         </Form>
       </Card>
-
-      <div className="text-center">
+      </div>
+      <div className="text-center mt-3">
         <p className="text-sm text-gray-500">
           Already have an account?{" "}
           <Link href="/auth/login " className="text-primary hover:underline">
@@ -116,5 +120,5 @@ export const SignupView = () => {
         </p>
       </div>
     </div>
-  );
+  )
 }
