@@ -4,7 +4,7 @@ import { Footer } from "@/components/layout/footer";
 
 
 export const metadata: Metadata = {
-  title: 'ChatScale - Live deom',
+  title: 'ReChat - Live deom',
   description: 'Build scalable chat experiences with our multi-tenant infrastructure. Deploy in seconds, scale to millions.',
 };
 

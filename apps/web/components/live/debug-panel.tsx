@@ -1,6 +1,6 @@
 "use client";
 
-import { useChat } from "@chatscale/react";
+import { useChat } from "@rechat/react";
 
 export function DebugPanel() {
   const {

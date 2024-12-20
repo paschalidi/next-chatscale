@@ -1,16 +1,16 @@
 {
-  "name": "chatscale",
-  "description": "chatscale",
+  "name": "rechat",
+  "description": "rechat",
   "private": true,
   "scripts": {
-    "start": "pnpm --filter @chatscale/web start",
+    "start": "pnpm --filter @rechat/web start",
     "build": "pnpm -r build",
     "dev": "pnpm --parallel -r dev",
     "lint": "pnpm -r lint"
 
   },
   "devDependencies": {
-    "@chatscale/react": "workspace:^",
+    "@rechat/react": "workspace:^",
     "@swc/core": "^1.10.1",
     "@types/react": "^18.3.16",
     "tsup": "^8.3.5",

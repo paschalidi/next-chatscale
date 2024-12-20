@@ -1,5 +1,5 @@
 {
-  "name": "@chatscale/react",
+  "name": "@rechat/react",
   "version": "0.1.0",
   "private": true,
   "description": "Build scalable chat experiences.",

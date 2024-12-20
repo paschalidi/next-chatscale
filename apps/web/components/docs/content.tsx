@@ -1,10 +1,10 @@
 import CodeBlock from "@/components/ui/code-block";
 import Link from "next/link";
 
-const mailto = `mailto:paschalidi@outlook.com?subject=${encodeURIComponent("ChatScale Support Request")}&body=${encodeURIComponent(
-  `Hello ChatScale Support Team,
+const mailto = `mailto:paschalidi@outlook.com?subject=${encodeURIComponent("ReChat Support Request")}&body=${encodeURIComponent(
+  `Hello ReChat Support Team,
 
-I need assistance with ChatScale integration.
+I need assistance with ReChat integration.
 
 Technical Details:
 - Package Version: 
@@ -28,9 +28,9 @@ Current Behavior:
 Thank you for your help!`
 )}`
 const codeExamples = {
-  installation: `npm install @chatscale/react`,
+  installation: `npm install @rechat/react`,
 
-  quickStart: `import { ChatProvider, ChannelList, MessageInput } from '@chatscale/react'
+  quickStart: `import { ChatProvider, ChannelList, MessageInput } from '@rechat/react'
 
 function App() {
   return (
@@ -41,7 +41,7 @@ function App() {
   )
 }`,
 
-  chatProvider: `import { ChatProvider } from '@chatscale/react'
+  chatProvider: `import { ChatProvider } from '@rechat/react'
 
 <ChatProvider 
   organizationToken="your_token"
@@ -54,7 +54,7 @@ function App() {
   {/* Your chat components */}
 </ChatProvider>`,
 
-  channelList: `import { ChannelList } from '@chatscale/react'
+  channelList: `import { ChannelList } from '@rechat/react'
 
 <ChannelList 
   limit={50}
@@ -65,7 +65,7 @@ function App() {
   }}
 />`,
 
-  messageInput: `import { MessageInput } from '@chatscale/react'
+  messageInput: `import { MessageInput } from '@rechat/react'
 
 <MessageInput 
   placeholder="Type a message..."
@@ -83,7 +83,7 @@ function App() {
   )}
 />`,
 
-  hooks: `import { useChatConnection, useMessages } from '@chatscale/react'
+  hooks: `import { useChatConnection, useMessages } from '@rechat/react'
 
 function CustomChat() {
   const { status, connect, disconnect } = useChatConnection()
@@ -92,7 +92,7 @@ function CustomChat() {
   // Custom implementation
 }`,
 
-  presenceIndicator: `import { PresenceIndicator } from '@chatscale/react'
+  presenceIndicator: `import { PresenceIndicator } from '@rechat/react'
 
 <PresenceIndicator 
   userId="user123"
@@ -100,14 +100,14 @@ function CustomChat() {
   offlineClassName="user-offline"
 />`,
 
-  typingIndicator: `import { TypingIndicator } from '@chatscale/react'
+  typingIndicator: `import { TypingIndicator } from '@rechat/react'
 
 <TypingIndicator chatId="chat123" />`,
 
   errorHandling: `<ChatProvider
   organizationToken="your_token"
   onError={(error) => {
-    console.error('ChatScale error:', error)
+    console.error('ReChat error:', error)
     // Custom error handling
   }}
 >
@@ -119,13 +119,13 @@ export function DocsContent() {
   return (
     <div className="flex-1 max-w-3xl">
       <div className="prose prose-slate dark:prose-invert max-w-none">
-        <h1>ChatScale Documentation</h1>
+        <h1>ReChat Documentation</h1>
         <p className="lead">
-          Welcome to ChatScale - Enterprise-grade chat infrastructure for modern applications.
+          Welcome to ReChat - Enterprise-grade chat infrastructure for modern applications.
         </p>
 
         <h2 id="quick-start">Quick Start</h2>
-        <p>Get up and running with ChatScale in minutes:</p>
+        <p>Get up and running with ReChat in minutes:</p>
         <CodeBlock
           code={codeExamples.installation}
           language="bash"
@@ -141,8 +141,8 @@ export function DocsContent() {
 
         <h2 id="chat-provider">ChatProvider</h2>
         <p>
-          The ChatProvider component initializes the ChatScale client and manages the WebSocket connection.
-          It must wrap all other ChatScale components.
+          The ChatProvider component initializes the ReChat client and manages the WebSocket connection.
+          It must wrap all other ReChat components.
         </p>
         <CodeBlock
           code={codeExamples.chatProvider}
@@ -173,14 +173,14 @@ export function DocsContent() {
         />
 
         <h2 id="custom-components">Custom Components</h2>
-        <p>ChatScale components can be customized using render props:</p>
+        <p>ReChat components can be customized using render props:</p>
         <CodeBlock
           code={codeExamples.customComponents}
           filename="CustomComponent.jsx"
         />
 
         <h2 id="hooks">Hooks</h2>
-        <p>ChatScale provides custom hooks for advanced use cases:</p>
+        <p>ReChat provides custom hooks for advanced use cases:</p>
         <CodeBlock
           code={codeExamples.hooks}
           filename="CustomHooks.jsx"
@@ -210,7 +210,7 @@ export function DocsContent() {
         />
 
         <h2 id="error-handling">Error Handling</h2>
-        <p>ChatScale provides built-in error handling and reconnection logic.</p>
+        <p>ReChat provides built-in error handling and reconnection logic.</p>
         <CodeBlock
           code={codeExamples.errorHandling}
           filename="ErrorHandling.jsx"

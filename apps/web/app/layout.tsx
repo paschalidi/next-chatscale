@@ -8,7 +8,7 @@ import { ReactNode } from "react";
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'ChatScale - Enterprise Chat Infrastructure',
+  title: 'ReChat - Enterprise Chat Infrastructure',
   description: 'Build scalable chat experiences with our multi-tenant infrastructure. Deploy in seconds, scale to millions.',
 };
 

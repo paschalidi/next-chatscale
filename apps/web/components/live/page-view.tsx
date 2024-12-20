@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChannelList, ChannelResponseDto, ChatProvider, MessageInput, Messages } from "@chatscale/react";
+import { ChannelList, ChannelResponseDto, ChatProvider, MessageInput, Messages } from "@rechat/react";
 import { DebugPanel } from "@/components/live/debug-panel";
 import { useRouter, useSearchParams } from "next/navigation";
 import { clsx } from "clsx";
@@ -152,7 +152,7 @@ export const PageView = () => {
           <div className="mb-6">
             <h2 className="text-xl font-semibold mb-2">Test Configuration</h2>
             <p className="text-muted-foreground">
-              This is a live demo of the ChatScale components. Connect to a test channel and try it out.
+              This is a live demo of the ReChat components. Connect to a test channel and try it out.
             </p>
             {userId && (
               <p className="text-sm text-muted-foreground mt-2">

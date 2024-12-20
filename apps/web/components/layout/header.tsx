@@ -11,7 +11,7 @@ export function Header() {
         <Link href={'/'}>
           <div className="flex items-center space-x-2">
             <MessageSquare className="h-6 w-6" />
-            <span className="font-bold text-xl">ChatScale</span>
+            <span className="font-bold text-xl">ReChat</span>
           </div>
         </Link>
         <nav className="hidden md:flex items-center space-x-8">
