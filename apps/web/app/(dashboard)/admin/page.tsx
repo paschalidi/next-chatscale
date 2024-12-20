@@ -9,7 +9,6 @@ import { auth } from "@/auth/auth";
 
 export default async function AdminDashboard() {
   const session = await auth();
-  console.log(session)
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Dashboard</h1>
@@ -20,7 +19,7 @@ export default async function AdminDashboard() {
             <Users className="h-10 w-10 text-primary" />
             <div>
               <p className="text-sm text-muted-foreground">Total Users</p>
-              <h3 className="text-2xl font-bold">1,234</h3>
+              <h3 className="text-2xl font-bold">-</h3>
             </div>
           </div>
         </Card>
@@ -30,7 +29,7 @@ export default async function AdminDashboard() {
             <MessageSquare className="h-10 w-10 text-primary" />
             <div>
               <p className="text-sm text-muted-foreground">Messages Today</p>
-              <h3 className="text-2xl font-bold">5,678</h3>
+              <h3 className="text-2xl font-bold">-</h3>
             </div>
           </div>
         </Card>
@@ -40,7 +39,7 @@ export default async function AdminDashboard() {
             <Key className="h-10 w-10 text-primary" />
             <div>
               <p className="text-sm text-muted-foreground">Active API Keys</p>
-              <h3 className="text-2xl font-bold">12</h3>
+              <h3 className="text-2xl font-bold">-</h3>
             </div>
           </div>
         </Card>
@@ -50,7 +49,7 @@ export default async function AdminDashboard() {
             <Activity className="h-10 w-10 text-primary" />
             <div>
               <p className="text-sm text-muted-foreground">Response Time</p>
-              <h3 className="text-2xl font-bold">45ms</h3>
+              <h3 className="text-2xl font-bold">-</h3>
             </div>
           </div>
         </Card>

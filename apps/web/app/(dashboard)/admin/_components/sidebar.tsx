@@ -3,17 +3,14 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { BarChart, Key, LayoutDashboard, Settings, Users, } from "lucide-react";
+import { Key, LayoutDashboard, Users, } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { signInWrapper, signOutWrapper } from "@/auth/auth.services";
-import { SignInFormValues } from "@/app/(auth)/auth/login/_cargo/types";
+import { signOutWrapper } from "@/auth/auth.services";
 
 const navigation = [
-  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Team", href: "/admin/team", icon: Users },
-  { name: "API Keys", href: "/admin/api-keys", icon: Key },
-  { name: "Analytics", href: "/admin/analytics", icon: BarChart, disabled: true },
-  { name: "Settings", href: "/admin/settings", icon: Settings },
+  { name: "Dashboard", href: "/admin", icon: LayoutDashboard, disabled: false },
+  { name: "Team", href: "/admin/team", icon: Users, disabled: false },
+  { name: "API Keys", href: "/admin/api-keys", icon: Key, disabled: false },
 ];
 
 export function Sidebar() {
