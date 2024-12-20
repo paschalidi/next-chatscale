@@ -21,7 +21,12 @@ export function Header() {
           <Link href="/docs" className="text-sm text-muted-foreground hover:text-primary">
             Documentation
           </Link>
-          <Button disabled variant="outline">Login</Button>
+          <Button variant="outline">
+            <Link href={'/auth/login'}>
+              Login
+            </Link>
+          </Button>
+
           <Link href={'/live?cn=public'} >
             <Button>
               Try it out &nbsp;⚡
