@@ -33,7 +33,6 @@ export const useChannels = ({ channelName }: { channelName: string }): UseChanne
     fetchData();
   }, []);
 
-  console.log(data)
   return {
     currentChannelId: data?.find(channel => channelName === channel.name)?.id,
     channels: data,

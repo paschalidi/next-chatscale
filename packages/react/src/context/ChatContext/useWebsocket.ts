@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { config } from "../../config";
 import { MessageRequestDto } from "../../types";
 
@@ -7,9 +7,12 @@ export function useWebSocket(channelName: string) {
   const [messages, setMessages] = useState<MessageRequestDto[]>([]);
   const ws = useRef<WebSocket | null>(null);
 
-  const connect = useCallback(() => {
-    // Only create a new connection if there isn't one already
-    if (!ws.current || ws.current.readyState === WebSocket.CLOSED) {
+
+  useEffect(() => {
+    const connect = () => {
+      // Only create a new connection if there isn't one already
+      console.log(ws.current, ws.current?.readyState)
+      console.log('Connecting to WebSocket the ', channelName);
       ws.current = new WebSocket(`${config.rust_ws_url}/chat/${channelName}`);
 
       ws.current.onopen = () => {
@@ -30,10 +33,8 @@ export function useWebSocket(channelName: string) {
         setIsConnected(false);
         console.log('WebSocket closed');
       };
-    }
-  }, [channelName]);
+    };
 
-  useEffect(() => {
     connect();
 
     // Cleanup function
@@ -43,7 +44,7 @@ export function useWebSocket(channelName: string) {
         ws.current.close();
       }
     };
-  }, [connect]);
+  }, [channelName]);
 
   return { isConnected, messages, ws: ws.current };
 }

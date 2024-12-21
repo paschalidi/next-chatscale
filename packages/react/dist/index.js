@@ -303,8 +303,8 @@ var __toCommonJS = function(mod) {
     }), mod);
 };
 // src/index.ts
-var src_exports = {};
-__export(src_exports, {
+var index_exports = {};
+__export(index_exports, {
     ChannelList: function() {
         return ChannelList;
     },
@@ -321,7 +321,7 @@ __export(src_exports, {
         return useChat;
     }
 });
-module.exports = __toCommonJS(src_exports);
+module.exports = __toCommonJS(index_exports);
 // src/context/ChatContext/index.tsx
 var React = __toESM(require("react"));
 var import_react4 = require("react");
@@ -589,7 +589,6 @@ var useChannels = function(param) {
     (0, import_react.useEffect)(function() {
         fetchData();
     }, []);
-    console.log(data);
     return {
         currentChannelId: data === null || data === void 0 ? void 0 : (_data_find = data.find(function(channel) {
             return channelName === channel.name;
@@ -606,8 +605,11 @@ function useWebSocket(channelName) {
     var _ref = _sliced_to_array((0, import_react2.useState)(false), 2), isConnected = _ref[0], setIsConnected = _ref[1];
     var _ref1 = _sliced_to_array((0, import_react2.useState)([]), 2), messages = _ref1[0], setMessages = _ref1[1];
     var ws = (0, import_react2.useRef)(null);
-    var connect = (0, import_react2.useCallback)(function() {
-        if (!ws.current || ws.current.readyState === WebSocket.CLOSED) {
+    (0, import_react2.useEffect)(function() {
+        var connect = function() {
+            var _ws_current;
+            console.log(ws.current, (_ws_current = ws.current) === null || _ws_current === void 0 ? void 0 : _ws_current.readyState);
+            console.log("Connecting to WebSocket the ", channelName);
             ws.current = new WebSocket("".concat(config.rust_ws_url, "/chat/").concat(channelName));
             ws.current.onopen = function() {
                 setIsConnected(true);
@@ -629,11 +631,7 @@ function useWebSocket(channelName) {
                 setIsConnected(false);
                 console.log("WebSocket closed");
             };
-        }
-    }, [
-        channelName
-    ]);
-    (0, import_react2.useEffect)(function() {
+        };
         connect();
         return function() {
             if (ws.current && ws.current.readyState === WebSocket.OPEN) {
@@ -641,7 +639,7 @@ function useWebSocket(channelName) {
             }
         };
     }, [
-        connect
+        channelName
     ]);
     return {
         isConnected: isConnected,
@@ -814,7 +812,7 @@ var React3 = __toESM(require("react"));
 var MessageInput = function(param) {
     var _param_placeholder = param.placeholder, placeholder = _param_placeholder === void 0 ? "Type a message..." : _param_placeholder, onSend = param.onSend, _param_maxLength = param.maxLength, maxLength = _param_maxLength === void 0 ? 1e3 : _param_maxLength, _param_disabled = param.disabled, disabled = _param_disabled === void 0 ? false : _param_disabled;
     var _React3_useState = _sliced_to_array(React3.useState(""), 2), message = _React3_useState[0], setMessage = _React3_useState[1];
-    var _useChat = useChat(), ws = _useChat.ws, _useChat_currentUser = _useChat.currentUser, currentUserId = _useChat_currentUser.id, currentUserName = _useChat_currentUser.userName, isConnected = _useChat_currentUser.isConnected, _useChat_activeChannel = _useChat.activeChannel, channelId = _useChat_activeChannel.id, channelName = _useChat_activeChannel.name;
+    var _useChat = useChat(), ws = _useChat.ws, _useChat_currentUser = _useChat.currentUser, currentUserId = _useChat_currentUser.id, isConnected = _useChat_currentUser.isConnected, _useChat_activeChannel = _useChat.activeChannel, channelName = _useChat_activeChannel.name;
     var handleSubmit = /*#__PURE__*/ function() {
         var _ref = _async_to_generator(function(e) {
             var data, e2;

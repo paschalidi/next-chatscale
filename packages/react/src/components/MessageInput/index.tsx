@@ -16,11 +16,9 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     ws,
     currentUser: {
       id: currentUserId,
-      userName: currentUserName,
       isConnected
     },
     activeChannel: {
-      id: channelId,
       name: channelName
     },
   } = useChat();
