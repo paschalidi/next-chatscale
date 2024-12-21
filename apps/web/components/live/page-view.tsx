@@ -176,7 +176,7 @@ export const PageView = () => {
                 <h3 className="font-medium mb-4">Channels</h3>
                 <ChannelList
                   renderItem={(chat) => <div className={clsx({
-                    'bg-accent': selectedChat?.id === chat.id,
+                    'bg-accent': selectedChat?.name === chat.name,
                   }, 'rounded-lg hover:bg-neutral-100 cursor-pointer p-3')}># {chat.name}</div>}
                   onChatSelect={handleChannelSelection}
                   customStyles={{
