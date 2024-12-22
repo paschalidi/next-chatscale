@@ -38,10 +38,10 @@ export const SignupView = () => {
       if (signInResult.success) {
         router.push('/admin');
       } else {
-        setServerError("Failed to sign in after account creation.");
+        setServerError("This email exists. Please try a different email.");
       }
     } catch (error) {
-      setServerError("Failed to create account. Try a different email.");
+      setServerError("Failed to create account. This is on us, pelase try again later.");
     }
   };
 
