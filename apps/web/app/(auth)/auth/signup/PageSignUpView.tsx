@@ -41,7 +41,7 @@ export const SignupView = () => {
         setServerError("Failed to sign in after account creation.");
       }
     } catch (error) {
-      setServerError("Failed to create account. This is on us, please try again later.");
+      setServerError("Failed to create account. Try a different email.");
     }
   };
 
