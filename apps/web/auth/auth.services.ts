@@ -56,32 +56,21 @@ export const createOrganizationAccount = async (formValues: CreateOrgFormValues)
   }
 };
 
-/**
- * Sign in and redirect to admin dashboard
- */
-export const signInWrapper = async ({ email, password }: SignInCredentials) => {
-  try {
-    await signIn('credentials', {
-      email,
-      password,
-      redirectTo: '/admin'
-    });
-  } catch (error) {
-    console.error('Sign in wrapper error:', error);
-    throw new Error('Authentication failed');
-  }
-};
+export const signInWrapper = async ({
+                                      email, password
+                                    }: {
+  email: string;
+  password: string;
+}) => {
+  await signIn('credentials', {
+    email,
+    password,
+    redirectTo: '/admin'
+  })
 
-/**
- * Sign out and redirect to home page
- */
+}
 export const signOutWrapper = async () => {
-  try {
-    await signOut({
-      redirectTo: '/'
-    });
-  } catch (error) {
-    console.error('Sign out error:', error);
-    throw new Error('Failed to sign out');
-  }
-};
+  await signOut({
+    redirectTo: '/'
+  })
+}
