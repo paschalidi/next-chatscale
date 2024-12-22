@@ -11,9 +11,11 @@ import { createOrgSchema } from "@/app/(auth)/auth/signup/_cargo/schema";
 import { CreateOrgFormValues } from "@/app/(auth)/auth/signup/_cargo/types";
 import { useMutateCreateAccountOrg } from "@/app/(auth)/auth/signup/_cargo/actions";
 import Link from "next/link";
+import { useState } from "react";
 
 
 export const SignupView = () => {
+  const [error, setServerError] = useState<string | null>(null);
   const router = useRouter();
   const form = useForm<CreateOrgFormValues>({
     defaultValues: {
@@ -30,6 +32,7 @@ export const SignupView = () => {
       await mutateAsync(data);
       router.push("/admin");
     } catch (error) {
+      setServerError("Please use a different email.");
       console.error("Signup error:", error);
     }
   };
@@ -102,6 +105,7 @@ export const SignupView = () => {
                 )}
               />
 
+              <FormMessage>{error}</FormMessage>
             </div>
 
             <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>

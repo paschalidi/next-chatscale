@@ -10,10 +10,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { SignInFormValues } from "@/app/(auth)/auth/login/_cargo/types";
 import { singInSchema } from "@/app/(auth)/auth/login/_cargo/schema";
 import { signInWrapper } from "@/auth/auth.services";
-import { toast } from "sonner"; // Using sonner for toasts
+import { useState } from "react";
 
 export function PageLoginView() {
-
+  const [error, setServerError] = useState<string | null>(null);
   const form = useForm<SignInFormValues>({
     defaultValues: {
       email: "",
@@ -26,14 +26,7 @@ export function PageLoginView() {
     try {
       await signInWrapper({ email, password });
     } catch (error) {
-      toast.error("Authentication failed", {
-        description: "Please check your email and password and try again.",
-      });
-
-      form.setError("root", {
-        type: "server",
-        message: "Invalid credentials",
-      });
+      setServerError('Invalid credentials')
     }
   };
 
@@ -90,6 +83,7 @@ export function PageLoginView() {
                 />
 
               </div>
+              <FormMessage>{error}</FormMessage>
 
               <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
                 Sign in
