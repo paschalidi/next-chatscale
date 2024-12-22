@@ -12,5 +12,6 @@ export type SignInRequest = {
 export interface UserSession {
   email: string;
   id: string;
+  organization_id: string;
   token: string;
 }

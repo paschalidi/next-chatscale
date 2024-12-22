@@ -10,6 +10,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { SignInFormValues } from "@/app/(auth)/auth/login/_cargo/types";
 import { singInSchema } from "@/app/(auth)/auth/login/_cargo/schema";
 import { signInWrapper } from "@/auth/auth.services";
+import { toast } from "sonner"; // Using sonner for toasts
 
 export function PageLoginView() {
 
@@ -22,7 +23,18 @@ export function PageLoginView() {
   });
 
   const onSubmit = async ({ email, password }: SignInFormValues) => {
-    await signInWrapper({ email, password });
+    try {
+      await signInWrapper({ email, password });
+    } catch (error) {
+      toast.error("Authentication failed", {
+        description: "Please check your email and password and try again.",
+      });
+
+      form.setError("root", {
+        type: "server",
+        message: "Invalid credentials",
+      });
+    }
   };
 
   return (

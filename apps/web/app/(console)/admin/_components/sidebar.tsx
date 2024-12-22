@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Key, LayoutDashboard, Users, } from "lucide-react";
+import { KeyRound as Key, LayoutDashboard, HandMetal, } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signOutWrapper } from "@/auth/auth.services";
 
 const navigation = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard, disabled: false },
-  { name: "Team", href: "/admin/team", icon: Users, disabled: false },
+  { name: "Team", href: "/admin/team", icon: HandMetal, disabled: false },
   { name: "API Keys", href: "/admin/api-keys", icon: Key, disabled: false },
 ];
 

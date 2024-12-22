@@ -57,8 +57,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     }),
   ],
-
   callbacks: {
+    // DEV note: not sure if this is the right way to handle this or even if we need this jwt to be here.
     async jwt({ token: { token: userSession, ...rest }, user }: {
       token: JWT;
       user?: User | UserSession;
@@ -76,20 +76,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       token: JWT & { token?: Partial<UserSession> };
     }): Promise<Session & { accessToken: string }> {
       if (session && isValidUserSession(userSession)) {
-        return {
+        const res = {
           user: {
+            organizationId: userSession.organization_id,
             email: userSession.email,
             id: userSession.id,
           },
           accessToken: userSession.token,
           expires: session.expires // Ensure we keep the expires property
-        };
+        }
+        console.log('session', res)
+        return res;
       }
       return { ...session, accessToken: '' };
     }
   },
   pages: {
     signIn: '/auth/login',
-  },
-  secret: process.env.NEXTAUTH_SECRET!,
+  }
 })

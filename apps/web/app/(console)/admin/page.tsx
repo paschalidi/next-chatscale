@@ -1,14 +1,10 @@
 import { Card } from "@/components/ui/card";
-import { 
-  Users, 
-  MessageSquare, 
-  Key, 
-  Activity 
-} from "lucide-react";
-import { auth } from "@/auth/auth";
+import { KeyRound as Key, MessageSquare, Users } from "lucide-react";
+import { fetchTotalApiKeys } from "@/app/(console)/admin/_services/admin.services";
 
 export default async function AdminDashboard() {
-  const session = await auth();
+  const totalKeys = await fetchTotalApiKeys();
+
   return (
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Dashboard</h1>
@@ -18,7 +14,7 @@ export default async function AdminDashboard() {
           <div className="flex items-center space-x-4">
             <Users className="h-10 w-10 text-primary" />
             <div>
-              <p className="text-sm text-muted-foreground">Total Users</p>
+              <p className="text-sm text-muted-foreground">Total Active Users</p>
               <h3 className="text-2xl font-bold">-</h3>
             </div>
           </div>
@@ -39,20 +35,11 @@ export default async function AdminDashboard() {
             <Key className="h-10 w-10 text-primary" />
             <div>
               <p className="text-sm text-muted-foreground">Active API Keys</p>
-              <h3 className="text-2xl font-bold">-</h3>
+              <h3 className="text-2xl font-bold">{totalKeys ?? '0'}</h3>
             </div>
           </div>
         </Card>
         
-        <Card className="p-6">
-          <div className="flex items-center space-x-4">
-            <Activity className="h-10 w-10 text-primary" />
-            <div>
-              <p className="text-sm text-muted-foreground">Response Time</p>
-              <h3 className="text-2xl font-bold">-</h3>
-            </div>
-          </div>
-        </Card>
       </div>
     </div>
   );
