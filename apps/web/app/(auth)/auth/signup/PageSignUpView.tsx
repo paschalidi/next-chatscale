@@ -1,7 +1,6 @@
 'use client'
 
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -9,14 +8,16 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createOrgSchema } from "@/app/(auth)/auth/signup/_cargo/schema";
 import { CreateOrgFormValues } from "@/app/(auth)/auth/signup/_cargo/types";
-import { useMutateCreateAccountOrg } from "@/app/(auth)/auth/signup/_cargo/actions";
 import Link from "next/link";
 import { useState } from "react";
+import { createOrganizationAccount, signInWrapper } from "@/auth/auth.services";
+import { useRouter } from "next/navigation";
 
 
 export const SignupView = () => {
-  const [error, setServerError] = useState<string | null>(null);
   const router = useRouter();
+
+  const [error, setServerError] = useState<string | null>(null);
   const form = useForm<CreateOrgFormValues>({
     defaultValues: {
       email: "",
@@ -26,14 +27,21 @@ export const SignupView = () => {
     resolver: yupResolver(createOrgSchema),
   });
 
-  const { mutateAsync } = useMutateCreateAccountOrg();
   const onSubmit = async (data: CreateOrgFormValues) => {
     try {
-      await mutateAsync(data);
-      router.push("/admin");
+      await createOrganizationAccount(data);
+      const signInResult = await signInWrapper({
+        email: data.email,
+        password: data.password
+      });
+
+      if (signInResult.success) {
+        router.push('/admin');
+      } else {
+        setServerError("Failed to sign in after account creation.");
+      }
     } catch (error) {
-      setServerError("Please use a different email.");
-      console.error("Signup error:", error);
+      setServerError("Failed to create account. This is on us, please try again later.");
     }
   };
 

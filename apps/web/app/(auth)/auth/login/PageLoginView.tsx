@@ -11,8 +11,10 @@ import { SignInFormValues } from "@/app/(auth)/auth/login/_cargo/types";
 import { singInSchema } from "@/app/(auth)/auth/login/_cargo/schema";
 import { signInWrapper } from "@/auth/auth.services";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function PageLoginView() {
+  const router = useRouter();
   const [error, setServerError] = useState<string | null>(null);
   const form = useForm<SignInFormValues>({
     defaultValues: {
@@ -24,9 +26,14 @@ export function PageLoginView() {
 
   const onSubmit = async ({ email, password }: SignInFormValues) => {
     try {
-      await signInWrapper({ email, password });
+      const result = await signInWrapper({ email, password });
+      if (result.success) {
+        router.push('/admin');
+      } else {
+        setServerError("Please check your email and password and try again.");
+      }
     } catch (error) {
-      setServerError('Invalid credentials')
+      setServerError("An unexpected error occurred.");
     }
   };
 
