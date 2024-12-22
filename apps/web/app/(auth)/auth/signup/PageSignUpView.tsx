@@ -28,21 +28,11 @@ export const SignupView = () => {
   });
 
   const onSubmit = async (data: CreateOrgFormValues) => {
-    try {
-      await createOrganizationAccount(data);
-      const signInResult = await signInWrapper({
+    await createOrganizationAccount(data);
+    await signInWrapper({
         email: data.email,
         password: data.password
       });
-
-      if (signInResult.success) {
-        router.push('/admin');
-      } else {
-        setServerError("This email exists. Please try a different email.");
-      }
-    } catch (error) {
-      setServerError("Failed to create account. This is on us, pelase try again later.");
-    }
   };
 
   return (

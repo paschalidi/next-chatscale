@@ -57,32 +57,18 @@ export const createOrganizationAccount = async (formValues: CreateOrgFormValues)
 };
 
 export const signInWrapper = async ({
-                                      email,
-                                      password
+                                      email, password
                                     }: {
   email: string;
   password: string;
 }) => {
-  try {
-    const result = await signIn('credentials', {
-      email,
-      password,
-      redirect: false, // Important: prevent Next.js from handling redirect
-    });
+  await signIn('credentials', {
+    email,
+    password,
+    redirectTo: '/admin'
+  })
 
-    if (!result?.ok) {
-      throw new Error('Invalid credentials');
-    }
-
-    // If we get here, authentication was successful
-    // You can handle the redirect client-side
-    return { success: true };
-  } catch (error) {
-    return { success: false, error: 'Authentication failed' };
-  }
 }
-
-
 export const signOutWrapper = async () => {
   await signOut({
     redirectTo: '/'

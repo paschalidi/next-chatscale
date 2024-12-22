@@ -25,16 +25,7 @@ export function PageLoginView() {
   });
 
   const onSubmit = async ({ email, password }: SignInFormValues) => {
-    try {
-      const result = await signInWrapper({ email, password });
-      if (result.success) {
-        router.push('/admin');
-      } else {
-        setServerError("Please check your email and password and try again.");
-      }
-    } catch (error) {
-      setServerError("An unexpected error occurred.");
-    }
+    await signInWrapper({ email, password });
   };
 
   return (
