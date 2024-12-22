@@ -85,7 +85,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           accessToken: userSession.token,
           expires: session.expires // Ensure we keep the expires property
         }
-        console.log('session', res)
         return res;
       }
       return { ...session, accessToken: '' };
