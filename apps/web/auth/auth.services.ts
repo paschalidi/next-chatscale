@@ -4,6 +4,7 @@ import { apiRequest } from "@/lib/apiRequest";
 import { SignInResponse } from "@/auth/types";
 import { signIn, signOut } from "@/auth/auth";
 import { CreateOrgFormValues, CreateOrgResponse } from "@/app/(auth)/auth/signup/_cargo/types";
+import { AuthError } from "next-auth";
 
 interface SignInCredentials {
   email: string;
@@ -38,7 +39,7 @@ export const createOrganizationAccount = async (formValues: CreateOrgFormValues)
   try {
     const { organization_name, password, email } = formValues;
 
-    return await apiRequest<ApiResponse<CreateOrgResponse>>(
+    await apiRequest<ApiResponse<CreateOrgResponse>>(
       '/api/organization_accounts/create',
       {
         method: "POST",
@@ -50,9 +51,12 @@ export const createOrganizationAccount = async (formValues: CreateOrgFormValues)
         headers: { 'Content-Type': 'application/json' }
       }
     );
+    return {}
   } catch (error) {
     console.error('Create organization error:', error);
-    throw new Error('Failed to create organization');
+    return {
+      error: 'Account creation failed, the email may already be in use.'
+    }
   }
 };
 
@@ -62,15 +66,32 @@ export const signInWrapper = async ({
   email: string;
   password: string;
 }) => {
-  await signIn('credentials', {
-    email,
-    password,
-    redirectTo: '/admin'
-  })
-
+  try {
+    await signIn('credentials', {
+      email,
+      password,
+      redirect: false
+    });
+    return {}
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return { error: 'Credentials dont match.' }
+    }
+    return { error: 'Failed to sign in' }
+  }
 }
 export const signOutWrapper = async () => {
-  await signOut({
-    redirectTo: '/'
-  })
+  try {
+    await signOut({
+      redirect: false
+    })
+
+    return {}
+  } catch (error) {
+    if (error instanceof AuthError) {
+      return { error: 'Credentials dont match.' }
+    }
+    return { error: 'Failed to sign in' }
+  }
+
 }

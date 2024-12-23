@@ -3,6 +3,7 @@ import Credentials from "next-auth/providers/credentials"
 import { signInWithCredentials } from "@/auth/auth.services";
 import { JWT } from 'next-auth/jwt';
 import { UserSession } from "@/auth/types";
+import { config } from "@/config";
 
 function isValidUserSession(
   obj: Partial<UserSession> | undefined
@@ -35,6 +36,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         credentials: Partial<Record<"email" | "password", unknown>>,
         req: Request
       ): Promise<User | null> {
+        console.log('@@',config.auth_secret)
         try {
           if (!credentials.email || !credentials.password) {
             throw new Error("Invalid credentials.")
@@ -46,11 +48,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             password: credentials.password as string
           })
           if (!session) {
+            debugger;
+            console.error('@@@Authentication error:', session)
             throw new Error("Invalid credentials.")
           }
 
+          debugger;
+
           return session
         } catch (error) {
+          console.error('####@@@Authentication error:', error)
           console.error('Authentication error:', error)
           return null
         }
@@ -90,6 +97,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return { ...session, accessToken: '' };
     }
   },
+  secret: config.auth_secret,
   pages: {
     signIn: '/auth/login',
   }

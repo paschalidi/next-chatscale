@@ -6,6 +6,7 @@ const nextConfig = {
   transpilePackages: ['@rechat/react'],
   reactStrictMode: true,
   logging: {
+    level: 'warn',
     fetches: {
       fullUrl: true
     }

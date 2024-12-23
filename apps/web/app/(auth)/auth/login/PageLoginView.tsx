@@ -25,7 +25,12 @@ export function PageLoginView() {
   });
 
   const onSubmit = async ({ email, password }: SignInFormValues) => {
-    await signInWrapper({ email, password });
+    const { error } = await signInWrapper({ email, password });
+    if (error) {
+      setServerError(error);
+      return;
+    }
+    router.push("/admin");
   };
 
   return (

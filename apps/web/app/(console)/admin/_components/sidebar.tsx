@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { KeyRound as Key, LayoutDashboard, HandMetal, } from "lucide-react";
+import { HandMetal, KeyRound as Key, LayoutDashboard, } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { signOutWrapper } from "@/auth/auth.services";
 
@@ -14,10 +14,12 @@ const navigation = [
 ];
 
 export function Sidebar() {
+  const router = useRouter();
   const pathname = usePathname();
 
   const signOut = async () => {
     await signOutWrapper();
+    router.push("/");
   };
 
   return (

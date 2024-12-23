@@ -27,12 +27,19 @@ export const SignupView = () => {
     resolver: yupResolver(createOrgSchema),
   });
 
-  const onSubmit = async (data: CreateOrgFormValues) => {
-    await createOrganizationAccount(data);
-    await signInWrapper({
-        email: data.email,
-        password: data.password
-      });
+  const onSubmit = async (values: CreateOrgFormValues) => {
+    const { error: serverError } = await createOrganizationAccount(values);
+    if (serverError) {
+      setServerError(serverError);
+      return;
+    }
+    const { error } = await signInWrapper(values);
+    if (error) {
+      setServerError(error);
+      return;
+    }
+    router.push("/admin");
+
   };
 
   return (
