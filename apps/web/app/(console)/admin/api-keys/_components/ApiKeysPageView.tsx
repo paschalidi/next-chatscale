@@ -21,9 +21,11 @@ import { ApiKeyFormData, GenerateKeyDialog } from "@/app/(console)/admin/api-key
 import { deleteApiKey, generateApiKey } from "@/app/(console)/admin/api-keys/_services/api-keys.services";
 
 export const ApiKeysPageView = ({
-                                  apiKeys
+                                  apiKeys,
+                                  organizationId,
                                 }: {
   apiKeys: GetAllApiKeysResponse;
+  organizationId: string;
 }) => {
 
   const [keys, setKeys] = useState(apiKeys);
@@ -80,6 +82,7 @@ export const ApiKeysPageView = ({
                 <TableRow>
                   <TableHead>Name</TableHead>
                   <TableHead>Key</TableHead>
+                  <TableHead>App id</TableHead>
                   <TableHead>Created</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -94,6 +97,12 @@ export const ApiKeysPageView = ({
                           ***************
                         </code>
                       </TableCell>
+                      <TableCell>
+                        <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm">
+                          {organizationId}
+                        </code>
+                      </TableCell>
+
                       <TableCell> {format(new Date(key.created_at), 'MMM dd, yyyy')}
                       </TableCell>
                       <TableCell className="text-right">

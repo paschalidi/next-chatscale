@@ -1,7 +1,7 @@
 'use server'
 import { auth } from "@/auth/auth";
 import { apiRequest } from "@/lib/apiRequest";
-import { GetAllApiKeysResponse, GetCreateApiKeyResponse, ApiKeyFormData } from "./types";
+import { ApiKeyFormData, GetAllApiKeysResponse, GetCreateApiKeyResponse } from "./types";
 
 export const fetchApiKeys = async () => {
   const { accessToken, user } = await auth() ?? {};
@@ -61,25 +61,5 @@ export const deleteApiKey = async (keyId: string) => {
   } catch (error) {
     console.error('Delete API Key error:', error);
     return false;
-  }
-};
-
-export const fetchTotalApiKeys = async () => {
-  const { accessToken, user } = await auth() ?? {};
-  if (!accessToken || !user) return 0;
-
-  try {
-    const response = await apiRequest<{
-      data: number
-    }>(`/api/organizations/${user.organizationId}/keys/count`, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`
-      }
-    });
-
-    return response.data ?? 0;
-  } catch (error) {
-    console.error('Fetch total API keys error:', error);
-    return 0;
   }
 };
