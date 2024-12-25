@@ -4,7 +4,7 @@ import { useChannels } from "./useChannels";
 import { useWebSocket } from "./useWebsocket";
 import { useChannelMessages } from "./useChannelMessage";
 import { config } from "../../config";
-import { ChannelsResponseDto, MessageRequestDto, MessageResponseDto, CombinedMessagesDto } from "../../types";
+import { ChannelsResponseDto, CombinedMessagesDto } from "../../types";
 
 interface Resource<T> {
   data: T | undefined;
@@ -14,7 +14,8 @@ interface Resource<T> {
 }
 
 interface ChatContextType {
-  organizationToken: string;
+  apiKey: string;
+  organizationId: string;
   activeChannel: {
     name: string;
     id: string | undefined;
@@ -32,7 +33,8 @@ interface ChatContextType {
 
 interface ChatProviderProps {
   children: React.ReactNode;
-  organizationToken: string;
+  apiKey: string;
+  appId: string;
   channelName: string;
   userId: string;
   userName?: string;
@@ -48,15 +50,11 @@ const ChatContext = React.createContext<ChatContextType | null>(null);
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({
                                                             children,
-                                                            organizationToken,
+                                                            apiKey: apiKey = 'sk_049a262e-52ea-4388-9b18-65747edd0598',
+                                                            appId: organizationId = '1d444045-e2c7-4f28-b4f2-1d42c514dc69',
                                                             channelName,
                                                             userId,
                                                             userName = 'Unknown user',
-                                                            options = {
-                                                              reconnectInterval: 3000,
-                                                              maxReconnectAttempts: 5,
-                                                              debug: false
-                                                            }
                                                           }) => {
   const { isConnected, messages: wsMessages, ws } = useWebSocket(channelName);
   const {
@@ -65,16 +63,25 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
     channelsError,
     refetchChannels,
     currentChannelId
-  } = useChannels({ channelName });
+  } = useChannels({ channelName, organizationId, apiKey });
+
+  console.log({
+    apiKey, organizationId
+  })
   const {
     messages: channelMessages,
     areMessagesLoading,
     refetchMessages,
     messagesError
-  } = useChannelMessages(currentChannelId);
+  } = useChannelMessages({
+    channelId: currentChannelId,
+    organizationId,
+    apiKey
+  });
 
   const value = useMemo<ChatContextType>(() => ({
-    organizationToken,
+    apiKey,
+    organizationId,
     currentUser: {
       id: userId,
       userName: userName,
@@ -100,7 +107,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
     wsEndpoint: `${config.rust_ws_url}/chat/${channelName}`,
     ws,
   }), [
-    organizationToken,
+    apiKey,
+    organizationId,
     channelName,
     currentChannelId,
     isConnected,

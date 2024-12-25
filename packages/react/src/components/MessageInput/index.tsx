@@ -11,6 +11,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
                                                             disabled = false,
 
                                                           }) => {
+  const { apiKey, organizationId } = useChat()
   const [message, setMessage] = React.useState('');
   const {
     ws,
@@ -38,7 +39,11 @@ export const MessageInput: React.FC<MessageInputProps> = ({
       setMessage('');
 
       try {
-        await postMessage(data);
+        await postMessage({
+          apiKey,
+          organizationId,
+          message: data
+        });
       } catch (e) {
         console.error(e);
       }

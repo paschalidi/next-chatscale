@@ -452,15 +452,18 @@ var logErrorMetadata = function(error, url) {
 };
 // src/services/index.ts
 var fetchChannels = /*#__PURE__*/ function() {
-    var _ref = _async_to_generator(function() {
+    var _ref = _async_to_generator(function(param) {
+        var organizationId, apiKey;
         return _ts_generator(this, function(_state) {
             switch(_state.label){
                 case 0:
+                    organizationId = param.organizationId, apiKey = param.apiKey;
                     return [
                         4,
-                        apiRequest("/api/channels", {
+                        apiRequest("/api/organizations/".concat(organizationId, "/channels"), {
                             method: "GET",
                             headers: {
+                                "X-API-Key": apiKey,
                                 Accept: "application/json"
                             }
                         })
@@ -473,19 +476,24 @@ var fetchChannels = /*#__PURE__*/ function() {
             }
         });
     });
-    return function fetchChannels() {
+    return function fetchChannels(_) {
         return _ref.apply(this, arguments);
     };
 }();
 var postMessage = /*#__PURE__*/ function() {
-    var _ref = _async_to_generator(function(message) {
+    var _ref = _async_to_generator(function(param) {
+        var apiKey, organizationId, message;
         return _ts_generator(this, function(_state) {
             switch(_state.label){
                 case 0:
+                    apiKey = param.apiKey, organizationId = param.organizationId, message = param.message;
                     return [
                         4,
-                        apiRequest("/api/messages", {
+                        apiRequest("/api/organizations/".concat(organizationId, "/messages"), {
                             method: "POST",
+                            headers: {
+                                "X-API-Key": apiKey
+                            },
                             body: JSON.stringify(message)
                         })
                     ];
@@ -497,22 +505,23 @@ var postMessage = /*#__PURE__*/ function() {
             }
         });
     });
-    return function postMessage(message) {
+    return function postMessage(_) {
         return _ref.apply(this, arguments);
     };
 }();
 var fetchMessagesByChannelId = /*#__PURE__*/ function() {
     var _ref = _async_to_generator(function(param) {
-        var channelId;
+        var channelId, organizationId, apiKey;
         return _ts_generator(this, function(_state) {
             switch(_state.label){
                 case 0:
-                    channelId = param.channelId;
+                    channelId = param.channelId, organizationId = param.organizationId, apiKey = param.apiKey;
                     return [
                         4,
-                        apiRequest("/api/messages/".concat(channelId), {
+                        apiRequest("/api/organizations/".concat(organizationId, "/messages/").concat(channelId), {
                             method: "GET",
                             headers: {
+                                "X-API-Key": apiKey,
                                 Accept: "application/json"
                             }
                         })
@@ -531,11 +540,12 @@ var fetchMessagesByChannelId = /*#__PURE__*/ function() {
 }();
 // src/context/ChatContext/useChannels.ts
 var useChannels = function(param) {
-    var channelName = param.channelName;
+    var channelName = param.channelName, organizationId = param.organizationId, apiKey = param.apiKey;
     var _data_find;
     var _ref = _sliced_to_array((0, import_react.useState)(), 2), data = _ref[0], setData = _ref[1];
     var _ref1 = _sliced_to_array((0, import_react.useState)(false), 2), isLoading = _ref1[0], setIsLoading = _ref1[1];
     var _ref2 = _sliced_to_array((0, import_react.useState)(null), 2), error = _ref2[0], setError = _ref2[1];
+    console.log(organizationId);
     var fetchData = /*#__PURE__*/ function() {
         var _ref = _async_to_generator(function() {
             var _ref, data2, err;
@@ -554,7 +564,10 @@ var useChannels = function(param) {
                         ]);
                         return [
                             4,
-                            fetchChannels()
+                            fetchChannels({
+                                organizationId: organizationId,
+                                apiKey: apiKey
+                            })
                         ];
                     case 2:
                         _ref = _state.sent(), data2 = _ref.data;
@@ -649,7 +662,8 @@ function useWebSocket(channelName) {
 }
 // src/context/ChatContext/useChannelMessage.ts
 var import_react3 = require("react");
-function useChannelMessages(channelId) {
+function useChannelMessages(param) {
+    var channelId = param.channelId, organizationId = param.organizationId, apiKey = param.apiKey;
     var _ref = _sliced_to_array((0, import_react3.useState)([]), 2), messages = _ref[0], setMessages = _ref[1];
     var _ref1 = _sliced_to_array((0, import_react3.useState)(false), 2), isLoading = _ref1[0], setIsLoading = _ref1[1];
     var _ref2 = _sliced_to_array((0, import_react3.useState)(null), 2), error = _ref2[0], setError = _ref2[1];
@@ -673,7 +687,9 @@ function useChannelMessages(channelId) {
                     return [
                         4,
                         fetchMessagesByChannelId({
-                            channelId: channelId
+                            channelId: channelId,
+                            organizationId: organizationId,
+                            apiKey: apiKey
                         })
                     ];
                 case 2:
@@ -720,19 +736,26 @@ function useChannelMessages(channelId) {
 // src/context/ChatContext/index.tsx
 var ChatContext = React.createContext(null);
 var ChatProvider = function(param) {
-    var children = param.children, organizationToken = param.organizationToken, channelName = param.channelName, userId = param.userId, _param_userName = param.userName, userName = _param_userName === void 0 ? "Unknown user" : _param_userName, _param_options = param.options, options = _param_options === void 0 ? {
-        reconnectInterval: 3e3,
-        maxReconnectAttempts: 5,
-        debug: false
-    } : _param_options;
+    var children = param.children, _param_apiKey = param.apiKey, apiKey = _param_apiKey === void 0 ? "sk_049a262e-52ea-4388-9b18-65747edd0598" : _param_apiKey, tmp = param.appId, organizationId = tmp === void 0 ? "1d444045-e2c7-4f28-b4f2-1d42c514dc69" : tmp, channelName = param.channelName, userId = param.userId, _param_userName = param.userName, userName = _param_userName === void 0 ? "Unknown user" : _param_userName;
     var _useWebSocket = useWebSocket(channelName), isConnected = _useWebSocket.isConnected, wsMessages = _useWebSocket.messages, ws = _useWebSocket.ws;
     var _useChannels = useChannels({
-        channelName: channelName
+        channelName: channelName,
+        organizationId: organizationId,
+        apiKey: apiKey
     }), channels = _useChannels.channels, isChannelsLoading = _useChannels.isChannelsLoading, channelsError = _useChannels.channelsError, refetchChannels = _useChannels.refetchChannels, currentChannelId = _useChannels.currentChannelId;
-    var _useChannelMessages = useChannelMessages(currentChannelId), channelMessages = _useChannelMessages.messages, areMessagesLoading = _useChannelMessages.areMessagesLoading, refetchMessages = _useChannelMessages.refetchMessages, messagesError = _useChannelMessages.messagesError;
+    console.log({
+        apiKey: apiKey,
+        organizationId: organizationId
+    });
+    var _useChannelMessages = useChannelMessages({
+        channelId: currentChannelId,
+        organizationId: organizationId,
+        apiKey: apiKey
+    }), channelMessages = _useChannelMessages.messages, areMessagesLoading = _useChannelMessages.areMessagesLoading, refetchMessages = _useChannelMessages.refetchMessages, messagesError = _useChannelMessages.messagesError;
     var value = (0, import_react4.useMemo)(function() {
         return {
-            organizationToken: organizationToken,
+            apiKey: apiKey,
+            organizationId: organizationId,
             currentUser: {
                 id: userId,
                 userName: userName,
@@ -758,7 +781,8 @@ var ChatProvider = function(param) {
             ws: ws
         };
     }, [
-        organizationToken,
+        apiKey,
+        organizationId,
         channelName,
         currentChannelId,
         isConnected,
@@ -811,8 +835,9 @@ var ChannelList = function(param) {
 var React3 = __toESM(require("react"));
 var MessageInput = function(param) {
     var _param_placeholder = param.placeholder, placeholder = _param_placeholder === void 0 ? "Type a message..." : _param_placeholder, onSend = param.onSend, _param_maxLength = param.maxLength, maxLength = _param_maxLength === void 0 ? 1e3 : _param_maxLength, _param_disabled = param.disabled, disabled = _param_disabled === void 0 ? false : _param_disabled;
+    var _useChat = useChat(), apiKey = _useChat.apiKey, organizationId = _useChat.organizationId;
     var _React3_useState = _sliced_to_array(React3.useState(""), 2), message = _React3_useState[0], setMessage = _React3_useState[1];
-    var _useChat = useChat(), ws = _useChat.ws, _useChat_currentUser = _useChat.currentUser, currentUserId = _useChat_currentUser.id, isConnected = _useChat_currentUser.isConnected, _useChat_activeChannel = _useChat.activeChannel, channelName = _useChat_activeChannel.name;
+    var _useChat1 = useChat(), ws = _useChat1.ws, _useChat_currentUser = _useChat1.currentUser, currentUserId = _useChat_currentUser.id, isConnected = _useChat_currentUser.isConnected, _useChat_activeChannel = _useChat1.activeChannel, channelName = _useChat_activeChannel.name;
     var handleSubmit = /*#__PURE__*/ function() {
         var _ref = _async_to_generator(function(e) {
             var data, e2;
@@ -842,7 +867,11 @@ var MessageInput = function(param) {
                         ]);
                         return [
                             4,
-                            postMessage(data)
+                            postMessage({
+                                apiKey: apiKey,
+                                organizationId: organizationId,
+                                message: data
+                            })
                         ];
                     case 2:
                         _state.sent();

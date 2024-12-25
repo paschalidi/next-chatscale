@@ -3,7 +3,11 @@ import { useCallback, useEffect, useState } from 'react';
 import { MessagesResponseDto } from "../../types";
 import { fetchMessagesByChannelId } from "../../services";
 
-export function useChannelMessages(channelId?: string) {
+export function useChannelMessages({
+                                     channelId, organizationId, apiKey
+                                   }: {
+  channelId?: string; organizationId: string; apiKey: string
+}) {
   const [messages, setMessages] = useState<MessagesResponseDto>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -13,7 +17,7 @@ export function useChannelMessages(channelId?: string) {
 
     setIsLoading(true);
     try {
-      const { data } = await fetchMessagesByChannelId({ channelId });
+      const { data } = await fetchMessagesByChannelId({ channelId, organizationId, apiKey });
       setMessages(data);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to fetch messages'));

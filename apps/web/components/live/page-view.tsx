@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { createParticipant } from "@/app/(live)/live/services";
+import { config } from "@/config";
 
 function generateRandomUsername(): string {
   const animals = [
@@ -68,6 +69,7 @@ export const PageView = () => {
     router.replace(`?cn=${channel.name}`, { scroll: false });
   }
 
+  console.log(config)
   return (
     <div className="flex flex-col min-h-screen">
       <Modal isOpen={isUsernameModalOpen} title="Choose a userName" onCloseRequest={closeModal}>
@@ -165,7 +167,8 @@ export const PageView = () => {
             userName={userName}
             userId={userId}
             channelName={channelName}
-            organizationToken="test_token"
+            appId={config.rechat_app_id!}
+            apiKey={config.rechat_api_key!}
             options={{ debug: true }}
           >
             <DebugPanel/>

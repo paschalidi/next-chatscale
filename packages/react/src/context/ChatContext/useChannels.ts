@@ -10,17 +10,23 @@ interface UseChannelsReturn {
   refetchChannels: () => Promise<void>;
 }
 
-export const useChannels = ({ channelName }: { channelName: string }): UseChannelsReturn => {
+export const useChannels = ({ channelName, organizationId, apiKey }: {
+  channelName: string,
+  organizationId: string
+  apiKey: string
+}): UseChannelsReturn => {
   const [data, setData] = useState<ChannelsResponseDto>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+
+  console.log(organizationId)
 
   const fetchData = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const { data } = await fetchChannels();
+      const { data } = await fetchChannels({ organizationId, apiKey });
       setData(data);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to fetch channels'));

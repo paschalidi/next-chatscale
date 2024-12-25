@@ -25,7 +25,8 @@ interface Resource<T> {
     refetch: () => Promise<void>;
 }
 interface ChatContextType {
-    organizationToken: string;
+    apiKey: string;
+    organizationId: string;
     activeChannel: {
         name: string;
         id: string | undefined;
@@ -42,7 +43,8 @@ interface ChatContextType {
 }
 interface ChatProviderProps {
     children: React.ReactNode;
-    organizationToken: string;
+    apiKey: string;
+    appId: string;
     channelName: string;
     userId: string;
     userName?: string;

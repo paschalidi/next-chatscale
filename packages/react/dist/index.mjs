@@ -87,32 +87,37 @@ var logErrorMetadata = (error, url) => {
 };
 
 // src/services/index.ts
-var fetchChannels = async () => {
+var fetchChannels = async ({ organizationId, apiKey }) => {
   return await apiRequest(
-    "/api/channels",
+    `/api/organizations/${organizationId}/channels`,
     {
       method: "GET",
       headers: {
+        "X-API-Key": apiKey,
         Accept: "application/json"
       }
     }
   );
 };
-var postMessage = async (message) => {
+var postMessage = async ({ apiKey, organizationId, message }) => {
   return await apiRequest(
-    "/api/messages",
+    `/api/organizations/${organizationId}/messages`,
     {
       method: "POST",
+      headers: {
+        "X-API-Key": apiKey
+      },
       body: JSON.stringify(message)
     }
   );
 };
-var fetchMessagesByChannelId = async ({ channelId }) => {
+var fetchMessagesByChannelId = async ({ channelId, organizationId, apiKey }) => {
   return await apiRequest(
-    `/api/messages/${channelId}`,
+    `/api/organizations/${organizationId}/messages/${channelId}`,
     {
       method: "GET",
       headers: {
+        "X-API-Key": apiKey,
         Accept: "application/json"
       }
     }
@@ -120,15 +125,16 @@ var fetchMessagesByChannelId = async ({ channelId }) => {
 };
 
 // src/context/ChatContext/useChannels.ts
-var useChannels = ({ channelName }) => {
+var useChannels = ({ channelName, organizationId, apiKey }) => {
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  console.log(organizationId);
   const fetchData = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const { data: data2 } = await fetchChannels();
+      const { data: data2 } = await fetchChannels({ organizationId, apiKey });
       setData(data2);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to fetch channels"));
@@ -188,7 +194,11 @@ function useWebSocket(channelName) {
 
 // src/context/ChatContext/useChannelMessage.ts
 import { useCallback, useEffect as useEffect3, useState as useState3 } from "react";
-function useChannelMessages(channelId) {
+function useChannelMessages({
+  channelId,
+  organizationId,
+  apiKey
+}) {
   const [messages, setMessages] = useState3([]);
   const [isLoading, setIsLoading] = useState3(false);
   const [error, setError] = useState3(null);
@@ -197,7 +207,7 @@ function useChannelMessages(channelId) {
       return;
     setIsLoading(true);
     try {
-      const { data } = await fetchMessagesByChannelId({ channelId });
+      const { data } = await fetchMessagesByChannelId({ channelId, organizationId, apiKey });
       setMessages(data);
     } catch (err) {
       setError(err instanceof Error ? err : new Error("Failed to fetch messages"));
@@ -215,15 +225,11 @@ function useChannelMessages(channelId) {
 var ChatContext = React.createContext(null);
 var ChatProvider = ({
   children,
-  organizationToken,
+  apiKey = "sk_049a262e-52ea-4388-9b18-65747edd0598",
+  appId: organizationId = "1d444045-e2c7-4f28-b4f2-1d42c514dc69",
   channelName,
   userId,
-  userName = "Unknown user",
-  options = {
-    reconnectInterval: 3e3,
-    maxReconnectAttempts: 5,
-    debug: false
-  }
+  userName = "Unknown user"
 }) => {
   const { isConnected, messages: wsMessages, ws } = useWebSocket(channelName);
   const {
@@ -232,15 +238,24 @@ var ChatProvider = ({
     channelsError,
     refetchChannels,
     currentChannelId
-  } = useChannels({ channelName });
+  } = useChannels({ channelName, organizationId, apiKey });
+  console.log({
+    apiKey,
+    organizationId
+  });
   const {
     messages: channelMessages,
     areMessagesLoading,
     refetchMessages,
     messagesError
-  } = useChannelMessages(currentChannelId);
+  } = useChannelMessages({
+    channelId: currentChannelId,
+    organizationId,
+    apiKey
+  });
   const value = useMemo(() => ({
-    organizationToken,
+    apiKey,
+    organizationId,
     currentUser: {
       id: userId,
       userName,
@@ -265,7 +280,8 @@ var ChatProvider = ({
     wsEndpoint: `${config.rust_ws_url}/chat/${channelName}`,
     ws
   }), [
-    organizationToken,
+    apiKey,
+    organizationId,
     channelName,
     currentChannelId,
     isConnected,
@@ -323,6 +339,7 @@ var MessageInput = ({
   maxLength = 1e3,
   disabled = false
 }) => {
+  const { apiKey, organizationId } = useChat();
   const [message, setMessage] = React3.useState("");
   const {
     ws,
@@ -346,7 +363,11 @@ var MessageInput = ({
       onSend?.(message);
       setMessage("");
       try {
-        await postMessage(data);
+        await postMessage({
+          apiKey,
+          organizationId,
+          message: data
+        });
       } catch (e2) {
         console.error(e2);
       }
