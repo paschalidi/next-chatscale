@@ -736,7 +736,7 @@ function useChannelMessages(param) {
 // src/context/ChatContext/index.tsx
 var ChatContext = React.createContext(null);
 var ChatProvider = function(param) {
-    var children = param.children, _param_apiKey = param.apiKey, apiKey = _param_apiKey === void 0 ? "sk_049a262e-52ea-4388-9b18-65747edd0598" : _param_apiKey, tmp = param.appId, organizationId = tmp === void 0 ? "1d444045-e2c7-4f28-b4f2-1d42c514dc69" : tmp, channelName = param.channelName, userId = param.userId, _param_userName = param.userName, userName = _param_userName === void 0 ? "Unknown user" : _param_userName;
+    var children = param.children, _param_apiKey = param.apiKey, apiKey = _param_apiKey === void 0 ? "sk_c9cfff34-234a-41d0-8f1c-5afc725e5b61" : _param_apiKey, tmp = param.appId, organizationId = tmp === void 0 ? "f5459909-bbff-4fda-b2a0-9dd5add18f95" : tmp, channelName = param.channelName, userId = param.userId, _param_userName = param.userName, userName = _param_userName === void 0 ? "Unknown user" : _param_userName;
     var _useWebSocket = useWebSocket(channelName), isConnected = _useWebSocket.isConnected, wsMessages = _useWebSocket.messages, ws = _useWebSocket.ws;
     var _useChannels = useChannels({
         channelName: channelName,
