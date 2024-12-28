@@ -50,7 +50,7 @@ const ChatContext = React.createContext<ChatContextType | null>(null);
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({
                                                             children,
-                                                            apiKey: apiKey = 'sk_c9cfff34-234a-41d0-8f1c-5afc725e5b61',
+                                                            apiKey: apiKey = 'sk_9857d995-8300-40e8-9565-0d865b8fe2d8\n',
                                                             appId: organizationId = 'f5459909-bbff-4fda-b2a0-9dd5add18f95',
                                                             channelName,
                                                             userId,
