@@ -225,7 +225,7 @@ function useChannelMessages({
 var ChatContext = React.createContext(null);
 var ChatProvider = ({
   children,
-  apiKey = "sk_9857d995-8300-40e8-9565-0d865b8fe2d8\n",
+  apiKey = "sk_50c034d4-c6b3-4f4f-8c47-f62e17897f90",
   appId: organizationId = "f5459909-bbff-4fda-b2a0-9dd5add18f95",
   channelName,
   userId,
