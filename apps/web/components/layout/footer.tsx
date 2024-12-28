@@ -1,4 +1,4 @@
-import { MessageSquare } from "lucide-react";
+import { LogoImage } from "@/components/ui/logo-image";
 
 export function Footer() {
   return (
@@ -6,7 +6,7 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <MessageSquare className="h-5 w-5" />
+            <LogoImage/>
             <span className="font-semibold">ReChat</span>
           </div>
           <p className="text-sm text-muted-foreground">

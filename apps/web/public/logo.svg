@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Cloud shape -->
+  <path d="M160 100c0-22.091-17.909-40-40-40-3.098 0-6.115.352-9 1.018C105.335 46.91 90.671 37 74 37c-22.091 0-40 17.909-40 40 0 .342.004.682.013 1.022C21.383 81.428 12 93.171 12 107c0 17.673 14.327 32 32 32h108c17.673 0 32-14.327 32-32 0-4.016-.74-7.86-2.087-11.403"
+        fill="#8B5CF6" 
+        stroke="#7C3AED" 
+        stroke-width="6"
+        stroke-linejoin="round"/>
+  
+  <!-- Chat message shapes -->
+  <rect x="50" y="95" width="60" height="30" rx="15" fill="white"/>
+  <rect x="90" y="75" width="60" height="30" rx="15" fill="white"/>
+</svg>

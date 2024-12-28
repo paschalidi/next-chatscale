@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { MessageSquare } from "lucide-react";
 import Link from "next/link";
+import { LogoImage } from "@/components/ui/logo-image";
 
 export function Header() {
   return (
@@ -10,7 +10,7 @@ export function Header() {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <Link href={'/'}>
           <div className="flex items-center space-x-2">
-            <MessageSquare className="h-6 w-6" />
+            <LogoImage/>
             <span className="font-bold text-xl">ReChat</span>
           </div>
         </Link>
