@@ -1,8 +1,13 @@
 import { Card } from "@/components/ui/card";
 import { KeyRound as Key, MessageSquare, Users } from "lucide-react";
-import { fetchTotalApiKeys, fetchTotalMessagesForMonth } from "@/app/(console)/admin/_services/admin.services";
+import {
+  fetchActiveUsers,
+  fetchTotalApiKeys,
+  fetchTotalMessagesForMonth
+} from "@/app/(console)/admin/_services/admin.services";
 
 export default async function AdminDashboard() {
+  const totalActiveUsers = await fetchActiveUsers();
   const totalKeys = await fetchTotalApiKeys();
   const { count, month } = await fetchTotalMessagesForMonth();
 
@@ -17,7 +22,7 @@ export default async function AdminDashboard() {
             <Users className="h-10 w-10 text-primary" />
             <div>
               <p className="text-sm text-muted-foreground">Total Active Users</p>
-              <h3 className="text-2xl font-bold">-</h3>
+              <h3 className="text-2xl font-bold">{totalActiveUsers}</h3>
             </div>
           </div>
         </Card>
