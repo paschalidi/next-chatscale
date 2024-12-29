@@ -50,8 +50,8 @@ const ChatContext = React.createContext<ChatContextType | null>(null);
 
 export const ChatProvider: React.FC<ChatProviderProps> = ({
                                                             children,
-                                                            apiKey: apiKey = 'sk_50c034d4-c6b3-4f4f-8c47-f62e17897f90',
-                                                            appId: organizationId = 'f5459909-bbff-4fda-b2a0-9dd5add18f95',
+                                                            apiKey: apiKey,
+                                                            appId: organizationId,
                                                             channelName,
                                                             userId,
                                                             userName = 'Unknown user',
@@ -65,9 +65,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({
     currentChannelId
   } = useChannels({ channelName, organizationId, apiKey });
 
-  console.log({
-    apiKey, organizationId
-  })
   const {
     messages: channelMessages,
     areMessagesLoading,

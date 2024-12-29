@@ -69,7 +69,6 @@ export const PageView = () => {
     router.replace(`?cn=${channel.name}`, { scroll: false });
   }
 
-  console.log(config)
   return (
     <div className="flex flex-col min-h-screen">
       <Modal isOpen={isUsernameModalOpen} title="Choose a userName" onCloseRequest={closeModal}>

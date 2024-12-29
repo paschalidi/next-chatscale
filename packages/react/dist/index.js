@@ -545,7 +545,6 @@ var useChannels = function(param) {
     var _ref = _sliced_to_array((0, import_react.useState)(), 2), data = _ref[0], setData = _ref[1];
     var _ref1 = _sliced_to_array((0, import_react.useState)(false), 2), isLoading = _ref1[0], setIsLoading = _ref1[1];
     var _ref2 = _sliced_to_array((0, import_react.useState)(null), 2), error = _ref2[0], setError = _ref2[1];
-    console.log(organizationId);
     var fetchData = /*#__PURE__*/ function() {
         var _ref = _async_to_generator(function() {
             var _ref, data2, err;
@@ -620,8 +619,6 @@ function useWebSocket(channelName) {
     var ws = (0, import_react2.useRef)(null);
     (0, import_react2.useEffect)(function() {
         var connect = function() {
-            var _ws_current;
-            console.log(ws.current, (_ws_current = ws.current) === null || _ws_current === void 0 ? void 0 : _ws_current.readyState);
             console.log("Connecting to WebSocket the ", channelName);
             ws.current = new WebSocket("".concat(config.rust_ws_url, "/chat/").concat(channelName));
             ws.current.onopen = function() {
@@ -736,17 +733,13 @@ function useChannelMessages(param) {
 // src/context/ChatContext/index.tsx
 var ChatContext = React.createContext(null);
 var ChatProvider = function(param) {
-    var children = param.children, _param_apiKey = param.apiKey, apiKey = _param_apiKey === void 0 ? "sk_50c034d4-c6b3-4f4f-8c47-f62e17897f90" : _param_apiKey, tmp = param.appId, organizationId = tmp === void 0 ? "f5459909-bbff-4fda-b2a0-9dd5add18f95" : tmp, channelName = param.channelName, userId = param.userId, _param_userName = param.userName, userName = _param_userName === void 0 ? "Unknown user" : _param_userName;
+    var children = param.children, apiKey = param.apiKey, organizationId = param.appId, channelName = param.channelName, userId = param.userId, _param_userName = param.userName, userName = _param_userName === void 0 ? "Unknown user" : _param_userName;
     var _useWebSocket = useWebSocket(channelName), isConnected = _useWebSocket.isConnected, wsMessages = _useWebSocket.messages, ws = _useWebSocket.ws;
     var _useChannels = useChannels({
         channelName: channelName,
         organizationId: organizationId,
         apiKey: apiKey
     }), channels = _useChannels.channels, isChannelsLoading = _useChannels.isChannelsLoading, channelsError = _useChannels.channelsError, refetchChannels = _useChannels.refetchChannels, currentChannelId = _useChannels.currentChannelId;
-    console.log({
-        apiKey: apiKey,
-        organizationId: organizationId
-    });
     var _useChannelMessages = useChannelMessages({
         channelId: currentChannelId,
         organizationId: organizationId,

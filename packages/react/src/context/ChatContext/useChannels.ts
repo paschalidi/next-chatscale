@@ -19,8 +19,6 @@ export const useChannels = ({ channelName, organizationId, apiKey }: {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
-  console.log(organizationId)
-
   const fetchData = async () => {
     setIsLoading(true);
     setError(null);

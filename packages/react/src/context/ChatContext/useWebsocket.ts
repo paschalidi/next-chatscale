@@ -11,7 +11,6 @@ export function useWebSocket(channelName: string) {
   useEffect(() => {
     const connect = () => {
       // Only create a new connection if there isn't one already
-      console.log(ws.current, ws.current?.readyState)
       console.log('Connecting to WebSocket the ', channelName);
       ws.current = new WebSocket(`${config.rust_ws_url}/chat/${channelName}`);
 

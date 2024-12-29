@@ -129,7 +129,6 @@ var useChannels = ({ channelName, organizationId, apiKey }) => {
   const [data, setData] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  console.log(organizationId);
   const fetchData = async () => {
     setIsLoading(true);
     setError(null);
@@ -162,7 +161,6 @@ function useWebSocket(channelName) {
   const ws = useRef(null);
   useEffect2(() => {
     const connect = () => {
-      console.log(ws.current, ws.current?.readyState);
       console.log("Connecting to WebSocket the ", channelName);
       ws.current = new WebSocket(`${config.rust_ws_url}/chat/${channelName}`);
       ws.current.onopen = () => {
@@ -225,8 +223,8 @@ function useChannelMessages({
 var ChatContext = React.createContext(null);
 var ChatProvider = ({
   children,
-  apiKey = "sk_50c034d4-c6b3-4f4f-8c47-f62e17897f90",
-  appId: organizationId = "f5459909-bbff-4fda-b2a0-9dd5add18f95",
+  apiKey,
+  appId: organizationId,
   channelName,
   userId,
   userName = "Unknown user"
@@ -239,10 +237,6 @@ var ChatProvider = ({
     refetchChannels,
     currentChannelId
   } = useChannels({ channelName, organizationId, apiKey });
-  console.log({
-    apiKey,
-    organizationId
-  });
   const {
     messages: channelMessages,
     areMessagesLoading,
