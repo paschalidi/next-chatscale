@@ -16,7 +16,7 @@ export default async function AdminDashboard() {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold">Dashboard</h1>
       
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card className="p-6">
           <div className="flex items-center space-x-4">
             <Users className="h-10 w-10 text-primary" />
