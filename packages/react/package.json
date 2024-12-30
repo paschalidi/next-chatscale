@@ -1,7 +1,7 @@
 {
   "name": "@rechat/react",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "description": "Build scalable chat experiences.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
