@@ -1,7 +1,11 @@
 {
   "name": "@rechat/react",
-  "version": "0.1.0",
+  "version": "0.1.4",
   "private": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "description": "Build scalable chat experiences.",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
