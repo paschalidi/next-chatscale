@@ -4,6 +4,7 @@ import { Inter } from 'next/font/google';
 import Providers from "@/app/providers";
 import { AuthProvider } from "@/auth/AuthProvider";
 import { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({
     <html lang="en" className="scroll-smooth">
     <body className={inter.className}>
     <AuthProvider>
+      <Analytics/>
       <Providers>
         {children}
       </Providers>
