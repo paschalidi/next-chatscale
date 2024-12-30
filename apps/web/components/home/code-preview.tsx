@@ -1,13 +1,21 @@
 import CodeBlock from "@/components/ui/code-block";
 
 export function CodePreview() {
-  const integrationCode = `import { ChatProvider, ChannelList, MessageInput } from '@rechat-sdk/react'
+  const integrationCode = `import { ChatProvider, ChannelList, Messages, MessageInput } from '@rechat-sdk/react'
 
 function App() {
   return (
-    <ChatProvider organizationToken="your_token">
-      <ChannelList />
-      <MessageInput />
+    <ChatProvider 
+      apiKey="your_api_key"
+      appId="your_app_id"
+      channelName="support"
+      userId="user_1"
+    >
+      <div className="flex h-screen">
+        <ChannelList />
+        <Messages />
+        <MessageInput />
+      </div>
     </ChatProvider>
   )
 }`;
@@ -19,18 +27,24 @@ function App() {
           Integration made simple
         </h2>
         <div className="max-w-3xl mx-auto">
-          {/* Using our enhanced CodeBlock component */}
           <CodeBlock
             code={integrationCode}
-            language="jsx"
-            filename="App.jsx"
+            language="tsx"
+            filename="App.tsx"
             showLineNumbers={true}
           />
 
           <div className="mt-8 space-y-4 text-sm text-muted-foreground">
             <p className="flex items-center gap-2">
               <span className="font-mono bg-primary/10 px-2 py-1 rounded text-primary">
-                @rechat-sdk/react
+                <a
+                  href="https://www.npmjs.com/package/@rechat-sdk/react"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:underline"
+                >
+                  @rechat-sdk/react
+                </a>
               </span>
               <span>Type-safe React components powered by our Rust backend</span>
             </p>
