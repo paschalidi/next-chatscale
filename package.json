@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "pnpm --filter @rechat/web start",
-    "build": "pnpm -r build",
+    "build": "pnpm --filter @rechat-sdk/react build && pnpm --filter @rechat/web build",
     "dev": "pnpm --parallel -r dev",
     "lint": "pnpm -r lint"
   },

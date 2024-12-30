@@ -15,7 +15,7 @@
 
 # production
 **/build
-**/packages/dist
+**/packages/react/dist
 
 # misc
 .DS_Store
