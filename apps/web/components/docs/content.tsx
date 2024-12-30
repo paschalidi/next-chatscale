@@ -234,7 +234,7 @@ export function DocsContent() {
         </div>
 
         <div className="my-12 p-6 border rounded-lg bg-primary/5">
-          <h3 className="mt-0">Need Help?</h3>
+          <h3 className="!mt-0">Need Help?</h3>
           <p className="mb-4">Our support team is here to help you build amazing chat experiences.</p>
           <div className="flex gap-4">
             <Link

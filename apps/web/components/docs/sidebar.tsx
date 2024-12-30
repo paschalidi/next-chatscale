@@ -9,8 +9,6 @@ const sections = [
     title: "Getting Started",
     items: [
       { title: "Quick Start", href: "/docs#quick-start" },
-      { title: "Installation", href: "/docs#installation" },
-      { title: "Basic Setup", href: "/docs#basic-setup" },
     ],
   },
   {
@@ -26,35 +24,14 @@ const sections = [
     title: "Hooks & Context",
     items: [
       { title: "useChat", href: "/docs#hooks" },
-      { title: "Messages API", href: "/docs#messages-api" },
-      { title: "Channels API", href: "/docs#channels-api" },
-      { title: "WebSocket Events", href: "/docs#websocket-events" },
-    ],
-  },
-  {
-    title: "Customization",
-    items: [
-      { title: "Styling", href: "/docs#styling" },
-      { title: "Custom Rendering", href: "/docs#custom-rendering" },
-      { title: "Theme Integration", href: "/docs#theme-integration" },
     ],
   },
   {
     title: "Advanced Usage",
     items: [
-      { title: "Error Handling", href: "/docs#error-handling" },
       { title: "TypeScript Types", href: "/docs#typescript-types" },
-      { title: "Performance", href: "/docs#performance" },
     ],
   },
-  {
-    title: "API Reference",
-    items: [
-      { title: "Configuration", href: "/docs#configuration" },
-      { title: "Response Types", href: "/docs#response-types" },
-      { title: "Rate Limits", href: "/docs#rate-limits" },
-    ],
-  }
 ];
 
 export function DocsSidebar() {
