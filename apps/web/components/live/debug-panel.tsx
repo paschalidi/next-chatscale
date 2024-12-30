@@ -1,6 +1,6 @@
 "use client";
 
-import { useChat } from "@rechat/react";
+import { useChat } from "@rechat-sdk/react";
 
 export function DebugPanel() {
   const {

@@ -28,9 +28,9 @@ Current Behavior:
 Thank you for your help!`
 )}`
 const codeExamples = {
-  installation: `npm install @rechat/react`,
+  installation: `npm install @rechat-sdk/react`,
 
-  quickStart: `import { ChatProvider, ChannelList, MessageInput } from '@rechat/react'
+  quickStart: `import { ChatProvider, ChannelList, MessageInput } from '@rechat-sdk/react'
 
 function App() {
   return (
@@ -41,7 +41,7 @@ function App() {
   )
 }`,
 
-  chatProvider: `import { ChatProvider } from '@rechat/react'
+  chatProvider: `import { ChatProvider } from '@rechat-sdk/react'
 
 <ChatProvider 
   organizationToken="your_token"
@@ -54,7 +54,7 @@ function App() {
   {/* Your chat components */}
 </ChatProvider>`,
 
-  channelList: `import { ChannelList } from '@rechat/react'
+  channelList: `import { ChannelList } from '@rechat-sdk/react'
 
 <ChannelList 
   limit={50}
@@ -65,7 +65,7 @@ function App() {
   }}
 />`,
 
-  messageInput: `import { MessageInput } from '@rechat/react'
+  messageInput: `import { MessageInput } from '@rechat-sdk/react'
 
 <MessageInput 
   placeholder="Type a message..."
@@ -83,7 +83,7 @@ function App() {
   )}
 />`,
 
-  hooks: `import { useChatConnection, useMessages } from '@rechat/react'
+  hooks: `import { useChatConnection, useMessages } from '@rechat-sdk/react'
 
 function CustomChat() {
   const { status, connect, disconnect } = useChatConnection()
@@ -92,7 +92,7 @@ function CustomChat() {
   // Custom implementation
 }`,
 
-  presenceIndicator: `import { PresenceIndicator } from '@rechat/react'
+  presenceIndicator: `import { PresenceIndicator } from '@rechat-sdk/react'
 
 <PresenceIndicator 
   userId="user123"
@@ -100,7 +100,7 @@ function CustomChat() {
   offlineClassName="user-offline"
 />`,
 
-  typingIndicator: `import { TypingIndicator } from '@rechat/react'
+  typingIndicator: `import { TypingIndicator } from '@rechat-sdk/react'
 
 <TypingIndicator chatId="chat123" />`,
 

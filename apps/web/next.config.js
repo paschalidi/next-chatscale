@@ -3,7 +3,7 @@ const isStandalone = process.env.STANDALONE === 'true';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   ...(isStandalone && {output: 'standalone'}),
-  transpilePackages: ['@rechat/react'],
+  transpilePackages: ['@rechat-sdk/react'],
   reactStrictMode: true,
   logging: {
     level: 'warn',

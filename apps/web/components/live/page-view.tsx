@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChannelList, ChannelResponseDto, ChatProvider, MessageInput, Messages } from "@rechat/react";
+import { ChannelList, ChannelResponseDto, ChatProvider, MessageInput, Messages } from "@rechat-sdk/react";
 import { DebugPanel } from "@/components/live/debug-panel";
 import { useRouter, useSearchParams } from "next/navigation";
 import { clsx } from "clsx";

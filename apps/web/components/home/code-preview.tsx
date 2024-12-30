@@ -1,7 +1,7 @@
 import CodeBlock from "@/components/ui/code-block";
 
 export function CodePreview() {
-  const integrationCode = `import { ChatProvider, ChannelList, MessageInput } from '@rechat/react'
+  const integrationCode = `import { ChatProvider, ChannelList, MessageInput } from '@rechat-sdk/react'
 
 function App() {
   return (
@@ -30,7 +30,7 @@ function App() {
           <div className="mt-8 space-y-4 text-sm text-muted-foreground">
             <p className="flex items-center gap-2">
               <span className="font-mono bg-primary/10 px-2 py-1 rounded text-primary">
-                @rechat/react
+                @rechat-sdk/react
               </span>
               <span>Type-safe React components powered by our Rust backend</span>
             </p>
