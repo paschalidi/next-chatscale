@@ -1,7 +1,7 @@
 name: Publish Package to NPM
 on:
   release:
-    types: [ created ]
+    types: [created]
 
 jobs:
   build:
@@ -20,17 +20,17 @@ jobs:
           registry-url: 'https://registry.npmjs.org'
 
       - name: Setup PNPM
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v2
         with:
-          version: 9
+          version: 8
 
       - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-        working-directory: .
+        run: |
+          cd packages/react
+          pnpm install --frozen-lockfile --ignore-workspace
 
       - name: Build
         run: pnpm build
-        working-directory: .
 
       - name: Publish to NPM
         run: pnpm publish --access public --no-git-checks
