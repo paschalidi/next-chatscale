@@ -82,7 +82,10 @@ export const PageView = () => {
             if (userName) {
               try {
                 setIsUserCreationLoading(true);
-                const { data: { id, name } } = await createParticipant({ name: userName });
+                const { data: { id, name } } = await createParticipant({
+                  name: userName,
+                  organizationId: config.rechat_app_id!
+                });
 
                 // Store in localStorage
                 localStorage.setItem('chatUserName', userName);
@@ -123,7 +126,10 @@ export const PageView = () => {
                 try {
                   const randomUsername = generateRandomUsername();
                   setIsUserCreationLoading(true);
-                  const { data: { id } } = await createParticipant({ name: randomUsername });
+                  const { data: { id } } = await createParticipant({
+                    name: randomUsername,
+                    organizationId: config.rechat_app_id!
+                  });
                   localStorage.setItem('chatUserName', randomUsername);
                   localStorage.setItem('chatUserId', id);
                   setUserName(randomUsername);
