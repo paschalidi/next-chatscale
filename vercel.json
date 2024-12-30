@@ -1,6 +1,6 @@
 {
   "version": 2,
   "installCommand": "pnpm install --shamefully-hoist",
-  "buildCommand": "cd packages/react && pnpm build && cd ../../apps/web && pnpm build",
+  "buildCommand": "pnpm --filter @rechat-sdk/react build && pnpm --filter @rechat/web build",
   "outputDirectory": "apps/web/.next"
 }
