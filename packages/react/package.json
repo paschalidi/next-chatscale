@@ -1,5 +1,5 @@
 {
-  "name": "@rechat/react",
+  "name": "@rechat-sdk/react",
   "version": "0.1.4",
   "private": false,
   "publishConfig": {
