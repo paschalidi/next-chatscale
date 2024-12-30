@@ -65,7 +65,7 @@ export const Messages: React.FC<MessagesProps> = ({
     <div className={`flex flex-col h-full ${className}`}>
       <div className={`flex-1 overflow-y-auto p-4 space-y-4 ${containerClassName}`}>
         {messages?.map((message, index) => (
-          <div key={index} className="max-w-[70%]">
+          <div key={index} className="max-w-full">
             {renderMessage ? renderMessage(message) : defaultRenderMessage(message)}
           </div>
         ))}

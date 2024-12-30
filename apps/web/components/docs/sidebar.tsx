@@ -9,33 +9,52 @@ const sections = [
     title: "Getting Started",
     items: [
       { title: "Quick Start", href: "/docs#quick-start" },
-      { title: "Authentication", href: "/docs#authentication" },
+      { title: "Installation", href: "/docs#installation" },
+      { title: "Basic Setup", href: "/docs#basic-setup" },
     ],
   },
   {
-    title: "Components",
+    title: "Core Components",
     items: [
       { title: "ChatProvider", href: "/docs#chat-provider" },
+      { title: "Messages", href: "/docs#messages" },
       { title: "ChannelList", href: "/docs#chat-list" },
       { title: "MessageInput", href: "/docs#message-input" },
     ],
   },
   {
-    title: "Advanced",
+    title: "Hooks & Context",
     items: [
-      { title: "Custom Components", href: "/docs#custom-components" },
-      { title: "Hooks", href: "/docs#hooks" },
-      { title: "Real-time Features", href: "/docs#real-time-features" },
+      { title: "useChat", href: "/docs#hooks" },
+      { title: "Messages API", href: "/docs#messages-api" },
+      { title: "Channels API", href: "/docs#channels-api" },
+      { title: "WebSocket Events", href: "/docs#websocket-events" },
     ],
   },
   {
-    title: "Reference",
+    title: "Customization",
     items: [
-      { title: "Error Handling", href: "/docs#error-handling" },
-      { title: "Rate Limits", href: "/docs#rate-limits" },
-      { title: "Browser Support", href: "/docs#browser-support" },
+      { title: "Styling", href: "/docs#styling" },
+      { title: "Custom Rendering", href: "/docs#custom-rendering" },
+      { title: "Theme Integration", href: "/docs#theme-integration" },
     ],
   },
+  {
+    title: "Advanced Usage",
+    items: [
+      { title: "Error Handling", href: "/docs#error-handling" },
+      { title: "TypeScript Types", href: "/docs#typescript-types" },
+      { title: "Performance", href: "/docs#performance" },
+    ],
+  },
+  {
+    title: "API Reference",
+    items: [
+      { title: "Configuration", href: "/docs#configuration" },
+      { title: "Response Types", href: "/docs#response-types" },
+      { title: "Rate Limits", href: "/docs#rate-limits" },
+    ],
+  }
 ];
 
 export function DocsSidebar() {
@@ -55,7 +74,7 @@ export function DocsSidebar() {
                   <Link
                     href={item.href}
                     className={cn(
-                      "block text-sm hover:text-primary",
+                      "block text-sm hover:text-primary transition-colors",
                       pathname + item.href.substring(5) === item.href
                         ? "text-primary font-medium"
                         : "text-muted-foreground"

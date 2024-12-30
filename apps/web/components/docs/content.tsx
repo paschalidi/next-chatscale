@@ -1,42 +1,29 @@
 import CodeBlock from "@/components/ui/code-block";
 import Link from "next/link";
 
-const mailto = `mailto:paschalidi@outlook.com?subject=${encodeURIComponent("ReChat Support Request")}&body=${encodeURIComponent(
-  `Hello ReChat Support Team,
+const mailto = `mailto:paschalidi@outlook.com?subject=${encodeURIComponent("ReChat Support Request")}`;
 
-I need assistance with ReChat integration.
-
-Technical Details:
-- Package Version: 
-- Browser: 
-- Environment: 
-
-Issue Description:
-[Please describe your issue]
-
-Steps to Reproduce:
-1. 
-2. 
-3. 
-
-Expected Behavior:
-
-
-Current Behavior:
-
-
-Thank you for your help!`
-)}`
 const codeExamples = {
   installation: `npm install @rechat-sdk/react`,
 
-  quickStart: `import { ChatProvider, ChannelList, MessageInput } from '@rechat-sdk/react'
+  quickStart: `import { ChatProvider, ChannelList, Messages, MessageInput } from '@rechat-sdk/react'
 
 function App() {
   return (
-    <ChatProvider organizationToken="your_token">
-      <ChannelList />
-      <MessageInput />
+    <ChatProvider 
+      apiKey="your_api_key"
+      appId="your_app_id"
+      channelName="general"
+      userId="user_123"
+      userName="John Doe"
+    >
+      <div className="flex h-screen">
+        <ChannelList />
+        <div className="flex-1 flex flex-col">
+          <Messages />
+          <MessageInput />
+        </div>
+      </div>
     </ChatProvider>
   )
 }`,
@@ -44,7 +31,11 @@ function App() {
   chatProvider: `import { ChatProvider } from '@rechat-sdk/react'
 
 <ChatProvider 
-  organizationToken="your_token"
+  apiKey="your_api_key"
+  appId="your_app_id"
+  channelName="general"
+  userId="user_123"
+  userName="John Doe"
   options={{
     reconnectInterval: 3000,
     maxReconnectAttempts: 5,
@@ -54,65 +45,58 @@ function App() {
   {/* Your chat components */}
 </ChatProvider>`,
 
+  messages: `import { Messages } from '@rechat-sdk/react'
+
+<Messages 
+  className="flex-1 overflow-y-auto"
+  containerClassName="p-4 space-y-4"
+  messageClassName="max-w-[70%]"
+  renderMessage={(message) => (
+    <div className="message-custom">
+      <p>{message.content}</p>
+      <span>{message.participant_id}</span>
+    </div>
+  )}
+/>`,
+
   channelList: `import { ChannelList } from '@rechat-sdk/react'
 
 <ChannelList 
   limit={50}
-  onChatSelect={(chatId) => console.log('Selected chat:', chatId)}
+  onChatSelect={(channel) => console.log('Selected:', channel)}
   customStyles={{
-    container: 'custom-container-class',
-    chatItem: 'custom-item-class'
+    container: 'border-r h-full w-64',
+    chatItem: 'p-4 hover:bg-gray-100'
   }}
+  renderItem={(channel) => (
+    <div>
+      <h3>{channel.name}</h3>
+    </div>
+  )}
 />`,
 
   messageInput: `import { MessageInput } from '@rechat-sdk/react'
 
 <MessageInput 
   placeholder="Type a message..."
-  onSend={(message) => console.log('Sending:', message)}
-  attachments={true}
+  onSend={(message) => console.log('Sent:', message)}
   maxLength={1000}
+  disabled={false}
 />`,
 
-  customComponents: `<ChannelList
-  renderItem={(chat) => (
-    <div className="custom-chat-item">
-      <h3>{chat.title}</h3>
-      <p>{chat.lastMessage}</p>
-    </div>
-  )}
-/>`,
-
-  hooks: `import { useChatConnection, useMessages } from '@rechat-sdk/react'
+  useChat: `import { useChat } from '@rechat-sdk/react'
 
 function CustomChat() {
-  const { status, connect, disconnect } = useChatConnection()
-  const { messages, sendMessage } = useMessages(chatId)
+  const { 
+    messages: { data: messages, isLoading, error, refetch },
+    channels: { data: channels },
+    currentUser: { id, userName, isConnected },
+    activeChannel: { name, id: channelId },
+    ws
+  } = useChat()
   
-  // Custom implementation
-}`,
-
-  presenceIndicator: `import { PresenceIndicator } from '@rechat-sdk/react'
-
-<PresenceIndicator 
-  userId="user123"
-  onlineClassName="user-online"
-  offlineClassName="user-offline"
-/>`,
-
-  typingIndicator: `import { TypingIndicator } from '@rechat-sdk/react'
-
-<TypingIndicator chatId="chat123" />`,
-
-  errorHandling: `<ChatProvider
-  organizationToken="your_token"
-  onError={(error) => {
-    console.error('ReChat error:', error)
-    // Custom error handling
-  }}
->
-  {/* Your chat components */}
-</ChatProvider>`
+  // Access real-time chat state and functionality
+}`
 };
 
 export function DocsContent() {
@@ -121,7 +105,7 @@ export function DocsContent() {
       <div className="prose prose-slate dark:prose-invert max-w-none">
         <h1>ReChat Documentation</h1>
         <p className="lead">
-          Welcome to ReChat - Enterprise-grade chat infrastructure for modern applications.
+          Welcome to ReChat - Enterprise-grade chat infrastructure for modern React applications.
         </p>
 
         <h2 id="quick-start">Quick Start</h2>
@@ -136,93 +120,116 @@ export function DocsContent() {
         <p>Add chat functionality to your React application with just a few lines of code:</p>
         <CodeBlock
           code={codeExamples.quickStart}
-          filename="App.jsx"
+          filename="App.tsx"
         />
 
         <h2 id="chat-provider">ChatProvider</h2>
         <p>
-          The ChatProvider component initializes the ReChat client and manages the WebSocket connection.
-          It must wrap all other ReChat components.
+          The ChatProvider component initializes the chat client and manages the WebSocket connection.
+          It provides the chat context to all child components.
         </p>
         <CodeBlock
           code={codeExamples.chatProvider}
-          filename="ChatProvider.jsx"
+          filename="ChatProvider.tsx"
         />
 
+        <div className="not-prose bg-muted p-4 rounded-lg my-6">
+          <h4 className="mt-0 text-base font-medium">Required Props</h4>
+          <ul className="mt-2 space-y-2 text-sm">
+            <li><code>apiKey</code>: Your ReChat API key</li>
+            <li><code>appId</code>: Your application ID</li>
+            <li><code>channelName</code>: The name of the channel to connect to</li>
+            <li><code>userId</code>: The current user&apos;s ID</li>
+            <li><code>userName</code>: The current user&apos;s display name</li>
+          </ul>
+        </div>
+
+        <h2 id="messages">Messages</h2>
+        <p>
+          The Messages component displays the message history and real-time messages for the current channel.
+          It handles message rendering, auto-scrolling, and loading states.
+        </p>
+        <CodeBlock
+          code={codeExamples.messages}
+          filename="Messages.tsx"
+        />
+
+        <div className="not-prose bg-muted p-4 rounded-lg my-6">
+          <h4 className="mt-0 text-base font-medium">Customization Props</h4>
+          <ul className="mt-2 space-y-2 text-sm">
+            <li><code>className</code>: CSS class for the outer container</li>
+            <li><code>containerClassName</code>: CSS class for the messages wrapper</li>
+            <li><code>messageClassName</code>: CSS class for individual messages</li>
+            <li><code>renderMessage</code>: Custom message render function</li>
+          </ul>
+        </div>
+
         <h2 id="chat-list">ChannelList</h2>
-        <p>Displays the list of active chats for the current user.</p>
+        <p>The ChannelList component displays available channels and handles channel selection.</p>
         <CodeBlock
           code={codeExamples.channelList}
-          filename="ChannelList.jsx"
+          filename="ChannelList.tsx"
         />
 
         <div className="not-prose bg-muted p-4 rounded-lg my-6">
           <h4 className="mt-0 text-base font-medium">Available Props</h4>
           <ul className="mt-2 space-y-2 text-sm">
-            <li><code>limit</code>: Maximum number of chats to display (default: 50)</li>
-            <li><code>onChatSelect</code>: Callback function when a chat is selected</li>
-            <li><code>customStyles</code>: Object containing custom CSS classes</li>
+            <li><code>limit</code>: Maximum number of channels to display</li>
+            <li><code>onChatSelect</code>: Callback when a channel is selected</li>
+            <li><code>customStyles</code>: Custom styling classes</li>
+            <li><code>renderItem</code>: Custom channel render function</li>
           </ul>
         </div>
 
         <h2 id="message-input">MessageInput</h2>
-        <p>Renders an input field for sending messages.</p>
+        <p>Provides an input field for sending messages in the current channel.</p>
         <CodeBlock
           code={codeExamples.messageInput}
-          filename="MessageInput.jsx"
+          filename="MessageInput.tsx"
         />
 
-        <h2 id="custom-components">Custom Components</h2>
-        <p>ReChat components can be customized using render props:</p>
-        <CodeBlock
-          code={codeExamples.customComponents}
-          filename="CustomComponent.jsx"
-        />
-
-        <h2 id="hooks">Hooks</h2>
-        <p>ReChat provides custom hooks for advanced use cases:</p>
-        <CodeBlock
-          code={codeExamples.hooks}
-          filename="CustomHooks.jsx"
-        />
-
-        <div className="not-prose bg-secondary/50 p-4 rounded-lg my-6">
-          <h4 className="mt-0 text-base font-medium">Available Hooks</h4>
+        <div className="not-prose bg-muted p-4 rounded-lg my-6">
+          <h4 className="mt-0 text-base font-medium">Available Props</h4>
           <ul className="mt-2 space-y-2 text-sm">
-            <li><code>useChatConnection</code>: Manage WebSocket connection</li>
-            <li><code>useMessages</code>: Access and manage messages for a specific chat</li>
-            <li><code>useChatList</code>: Access and manage the list of chats</li>
-            <li><code>useTypingIndicator</code>: Handle typing indicators</li>
+            <li><code>placeholder</code>: Input placeholder text</li>
+            <li><code>onSend</code>: Callback when a message is sent</li>
+            <li><code>maxLength</code>: Maximum message length</li>
+            <li><code>disabled</code>: Disable the input</li>
           </ul>
         </div>
 
-        <h2 id="real-time-features">Real-time Features</h2>
-        <h3>Presence Indicators</h3>
+        <h2 id="hooks">useChat Hook</h2>
+        <p>
+          The useChat hook provides access to the chat state and functionality. It returns
+          messages, channels, user information, and WebSocket connection details.
+        </p>
         <CodeBlock
-          code={codeExamples.presenceIndicator}
-          filename="PresenceIndicator.jsx"
+          code={codeExamples.useChat}
+          filename="CustomComponent.tsx"
         />
 
-        <h3>Typing Indicators</h3>
-        <CodeBlock
-          code={codeExamples.typingIndicator}
-          filename="TypingIndicator.jsx"
-        />
-
-        <h2 id="error-handling">Error Handling</h2>
-        <p>ReChat provides built-in error handling and reconnection logic.</p>
-        <CodeBlock
-          code={codeExamples.errorHandling}
-          filename="ErrorHandling.jsx"
-        />
-
-        <h2 id="rate-limits">Rate Limits</h2>
-        <div className="not-prose bg-muted p-4 rounded-lg my-6">
-          <h4 className="mt-0 text-base font-medium">Current Limits</h4>
+        <div className="not-prose bg-secondary/50 p-4 rounded-lg my-6">
+          <h4 className="mt-0 text-base font-medium">Hook Return Values</h4>
           <ul className="mt-2 space-y-2 text-sm">
-            <li>WebSocket connections: TDB per organization per day</li>
-            <li>Messages: TDB per organization per day</li>
-            <li>API requests: TDB per organization per day</li>
+            <li><code>messages</code>: Message data and loading state</li>
+            <li><code>channels</code>: Available channels and loading state</li>
+            <li><code>currentUser</code>: Current user information</li>
+            <li><code>activeChannel</code>: Currently active channel</li>
+            <li><code>ws</code>: WebSocket instance for advanced usage</li>
+          </ul>
+        </div>
+
+        <h2 id="typescript-types">TypeScript Support</h2>
+        <p>ReChat includes built-in TypeScript definitions for all components and hooks:</p>
+
+        <div className="not-prose bg-muted p-4 rounded-lg my-6">
+          <h4 className="mt-0 text-base font-medium">Available Types</h4>
+          <ul className="mt-2 space-y-2 text-sm">
+            <li><code>ChatListProps</code>: Props for ChannelList component</li>
+            <li><code>MessageInputProps</code>: Props for MessageInput component</li>
+            <li><code>MessagesProps</code>: Props for Messages component</li>
+            <li><code>ChannelResponseDto</code>: Channel data structure</li>
+            <li><code>MessageResponseDto</code>: Message data structure</li>
           </ul>
         </div>
 
