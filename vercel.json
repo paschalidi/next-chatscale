@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "installCommand": "pnpm install",
+  "installCommand": "pnpm install --shamefully-hoist",
   "buildCommand": "cd packages/react && pnpm build && cd ../../apps/web && pnpm build",
   "outputDirectory": "apps/web/.next"
 }
