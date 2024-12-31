@@ -1,5 +1,11 @@
 import { apiRequest } from "../lib/apiRequest";
-import { ChannelsResponseDto, MessageRequestDto, MessageResponseDto, MessagesResponseDto } from "../types";
+import {
+  ChannelsResponseDto,
+  MessageRequestDto,
+  MessageResponseDto,
+  MessagesResponseDto,
+  TParticipantsResponse
+} from "../types";
 
 
 export const fetchChannels = async ({ organizationId, apiKey }: { organizationId: string; apiKey: string }) => {
@@ -15,9 +21,9 @@ export const fetchChannels = async ({ organizationId, apiKey }: { organizationId
   );
 }
 
-export const createNewChannel = async ({ name }: { name: string }) => {
+export const createNewChannel = async ({ organizationId, name }: { organizationId: string, name: string }) => {
   return await apiRequest<{ data: ChannelsResponseDto, message: string }>(
-    '/api/channels',
+    `/api/organizations/${organizationId}/channels`,
     {
       method: "POST",
       headers: {
@@ -27,6 +33,17 @@ export const createNewChannel = async ({ name }: { name: string }) => {
     },
   );
 }
+
+export const createParticipant = async ({ name, organizationId }: { name: string, organizationId: string }) => {
+  return await apiRequest<{ data: TParticipantsResponse, message: string }>(
+    `/api/organizations/${organizationId}/participants`,
+    {
+      method: "POST",
+      body: JSON.stringify({ name })
+    }
+  );
+}
+
 
 export const postMessage = async ({ apiKey, organizationId, message }: {
   organizationId: string;

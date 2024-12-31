@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChannelList, ChannelResponseDto, ChatProvider, MessageInput, Messages } from "@rechat-sdk/react";
+import {
+  ChannelList,
+  ChannelResponseDto,
+  ChatProvider,
+  MessageInput,
+  Messages,
+  useCreateParticipant
+} from "@rechat-sdk/react";
 import { DebugPanel } from "@/components/live/debug-panel";
 import { useRouter, useSearchParams } from "next/navigation";
 import { clsx } from "clsx";
@@ -9,7 +16,6 @@ import { Modal } from "@/components/ui/modal";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { createParticipant } from "@/app/(live)/live/services";
 import { config } from "@/config";
 
 function generateRandomUsername(): string {
@@ -47,6 +53,7 @@ export const PageView = () => {
   const [isUsernameModalOpen, setIsUsernameModalOpen] = useState<boolean>(false); // Initialize as false
   const [isUserCreationLoading, setIsUserCreationLoading] = useState<boolean>(false);
   const closeModal = () => setIsUsernameModalOpen(false);
+  const { createParticipant } = useCreateParticipant();
 
   const router = useRouter();
 

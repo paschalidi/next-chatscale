@@ -4,6 +4,8 @@ export { MessageInput } from './components/MessageInput';
 export { Messages } from './components/Messages';
 
 export { useChat } from './context/ChatContext';
+export { useCreateParticipant } from './hooks/useCreateParticipant';
+export { useCreateChannel } from './hooks/useCreateChannel';
 
 export type { ChatListProps } from './components/ChannelList/types';
 export type { MessageInputProps } from './components/MessageInput/types';

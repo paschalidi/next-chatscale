@@ -19,3 +19,8 @@ export type MessageRequestDto = {
 }
 
 export type MessagesResponseDto = Array<MessageResponseDto>
+
+export type TParticipantsResponse = {
+  id: string;
+  name: string;
+}
