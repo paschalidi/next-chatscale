@@ -1,6 +1,6 @@
 {
   "name": "rechat",
-  "description": "rechat",
+  "description": "rechat monorepo",
   "private": true,
   "scripts": {
     "start": "pnpm --filter @rechat/web start",
