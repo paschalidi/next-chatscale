@@ -33,7 +33,7 @@ export function Header() {
             </Button>
           </Link>
           <Link
-            href="https://github.com/rechat-org/client-facing"
+            href="https://github.com/rechat-org"
             target="_blank"
             rel="noopener noreferrer"
             className="ml-[-20px] text-sm text-muted-foreground hover:text-primary flex items-center gap-1 hover:bg-neutral-100 p-3 rounded-xl"
