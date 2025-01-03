@@ -179,8 +179,8 @@ export const PageView = () => {
             userName={userName}
             userId={userId}
             channelName={channelName}
-            appId={'47d7832e-268d-495d-903c-114459d8c771'}
-            apiKey={'sk_92fe64b8-88e1-42da-9d91-21969c91c75c'}
+            appId={config.rechat_app_id!}
+            apiKey={config.rechat_api_key!}
             options={{ debug: true }}
           >
             <DebugPanel/>
